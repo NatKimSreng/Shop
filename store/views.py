@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from .models import *  
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django import forms
+from .forms import SignUpForm
 # Create your views here.
 def store(request):
 	products = Product.objects.all()
@@ -58,4 +62,21 @@ def logoutUser(request):
 	return redirect ('store')
 
 def registerPage(request):
-    return render(request, 'store/register.html', {})
+    form = SignUpForm()
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            messages.success(request, 'User created')
+            return redirect('store')
+        else:
+            messages.error(request, 'Error creating user')
+            return redirect('register')
+    else:
+        form = SignUpForm()
+        context = {'form':form}
+        return render(request, 'store/register.html', context)
