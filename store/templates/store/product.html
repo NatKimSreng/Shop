@@ -1,12 +1,10 @@
-{% extends 'store/main.html' %} {% block content %}
-
+{% extends 'store/main.html' %}{% load static %} {% block content %}
 <div class="container my-5">
   <div class="row align-items-center">
-    <!-- Product Image -->
     <div class="col-lg-6 mb-4">
       <div class="position-relative box-element">
         <img
-          src="{{ product.imageURL|default:'/static/images/placeholder.jpg' }}"
+          src="{% if product.imageURL %}{% static product.imageURL %}{% else %}{% static 'images/placeholder.jpg' %}{% endif %}"
           class="img-fluid product-img"
           alt="{{ product.name }}"
         />
@@ -15,12 +13,9 @@
           <span class="out-of-stock-text">Out of Stock</span>
         </div>
         {% endif %} {% if product.Is_sale %}
-        <span class="sale-badge">Sale</span>
-        {% endif %}
+        <span class="sale-badge">Sale</span> {% endif %}
       </div>
     </div>
-
-    <!-- Product Details -->
     <div class="col-lg-6">
       <h2 class="card-title mb-3">{{ product.name }}</h2>
       {% if product.Is_sale %}
@@ -37,38 +32,89 @@
         Out of Stock
       </p>
       {% endif %}
-      <!-- Product Description -->
-      <p class="text-muted mb-4 description">
-        {{ product.descrption}}
-      </p>
-      <!-- Optional Phone Specs -->
+      <p class="text-muted mb-4 description">{{ product.description }}</p>
       {% if product.Is_sale %}
-      <table class="table table-bordered mt-3">
-      {% endif %}
-      <!-- Add to Cart Button -->
+      <table class="table table-bordered mt-3"></table>
+      <div class="mb-3">
+        <label for="qty-cart" class="form-label">Quantity:</label>
+        <select id="qty-cart" class="form-select w-25">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
       <button
-        data-product="{{ product.id }}"
-        data-action="add"
-        class="btn btn-outline-primary update-cart mt-3 w-100"
-        {%
-        if
-        not
-        product.Is_sale
-        %}disabled{%
-        endif
-        %}
-        aria-label="{% if product.Is_sale %}Add {{ product.name }} to cart{% else %}{{ product.name }} is out of stock{% endif %}"
+        type="button"
+        value="{{ product.id }}"
+        class="btn btn-secondary add-cart"
+        data-product-id="{{ product.id }}"
       >
         Add to Cart
       </button>
-      <!-- Back to Products Link -->
-      <a
-        href="{% url 'store' %}"
-        class="btn btn-outline-secondary mt-3 w-100"
+      {% endif %}
+      <a href="{% url 'store' %}" class="btn btn-outline-secondary mt-3 w-100"
         >Back to Products</a
       >
     </div>
   </div>
 </div>
+
+<!-- Include jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Your custom script -->
+<script>
+  var $j = jQuery.noConflict();
+  $j(document).ready(function () {
+    $j(document).on("click", "#add-cart", function (e) {
+      e.preventDefault();
+
+      var product_id = $j("#add-cart").val();
+      var product_qty = $j("#qty-cart").val();
+
+      if (
+        !product_id ||
+        !product_qty ||
+        isNaN(product_qty) ||
+        product_qty < 1
+      ) {
+        console.error("Invalid product ID or quantity", {
+          product_id,
+          product_qty,
+        });
+        alert("Please select a valid product and quantity.");
+        return;
+      }
+
+      $j.ajax({
+        type: "POST",
+        url: '{% url "cart_add" %}',
+        data: {
+          product_id: product_id,
+          product_qty: product_qty,
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+          action: "post",
+        },
+        success: function (json) {
+          document.getElementById("cart_quantity").textContent = json.qty;
+          // Optionally update other UI elements or show a success message
+          alert("Product added to cart!");
+        },
+        error: function (xhr, errmsg, err) {
+          console.error(
+            "Error:",
+            xhr.responseJSON ? xhr.responseJSON.error : "Unknown error"
+          );
+          alert(
+            "Failed to add to cart: " +
+              (xhr.responseJSON ? xhr.responseJSON.error : "Unknown error")
+          );
+        },
+      });
+    });
+  });
+</script>
 
 {% endblock content %}

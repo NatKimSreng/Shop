@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -25,7 +24,7 @@
       type="images/png"
       href="{% static 'favicon/apple-touch-icon.png' %}"
     />
-    <script src="{% static 'js/cart.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -64,10 +63,15 @@
           <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
           <a href="{% url 'register' %}" class="btn btn-primary">register</a>
           {% endif %}
-          <a href="{% url 'cart' %}">
+          <a href="{% url 'cart_summary' %}">
             <img id="cart-icon" src="{% static 'images/cart.png' %}" />
           </a>
-          <p id="cart-total">{{item.quantity}}</p>
+
+          <span
+            class="badge bg-dark text-white ms-1 rounded-pill"
+            id="cart_quantity"
+            >{{ cart|length }}
+          </span>
         </div>
       </div>
     </nav>
@@ -102,7 +106,117 @@
       integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
       crossorigin="anonymous"
     ></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      var $j = jQuery.noConflict();
+      $j(document).ready(function () {
+        // Add to Cart (product listing and detail pages)
+        $j(document).on("click", ".add-cart", function (e) {
+          e.preventDefault();
+          var $button = $j(this);
+          var product_id = $button.val();
+          var product_qty = $j("#qty-cart").length ? $j("#qty-cart").val() : 1;
+
+          if (
+            !product_id ||
+            !product_qty ||
+            isNaN(product_qty) ||
+            product_qty < 1
+          ) {
+            console.error("Invalid product ID or quantity", {
+              product_id,
+              product_qty,
+            });
+            alert("Please select a valid product and quantity.");
+            return;
+          }
+
+          $button.prop("disabled", true).text("Adding...");
+          $j.ajax({
+            type: "POST",
+            url: '{% url "cart_add" %}',
+            data: {
+              product_id: product_id,
+              product_qty: product_qty,
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+              action: "post",
+            },
+            success: function (json) {
+              $button.prop("disabled", false).text("Add to Cart");
+              if (document.getElementById("cart_quantity")) {
+                document.getElementById("cart_quantity").textContent = json.qty;
+              }
+              alert("Product added to cart!");
+            },
+            error: function (xhr, errmsg, err) {
+              $button.prop("disabled", false).text("Add to Cart");
+              console.error(
+                "Error:",
+                xhr.responseJSON ? xhr.responseJSON.error : "Unknown error"
+              );
+              alert(
+                "Failed to add to cart: " +
+                  (xhr.responseJSON ? xhr.responseJSON.error : "Unknown error")
+              );
+            },
+          });
+        });
+
+        // Update Cart (cart summary page)
+        $j(document).on("click", ".update-cart", function (e) {
+          e.preventDefault();
+          var $button = $j(this);
+          var product_id = $button.data("product-id");
+          var action = $button.data("action");
+
+          $button.prop("disabled", true);
+          $j.ajax({
+            type: "POST",
+            url: '{% url "cart_update" %}',
+            data: {
+              product_id: product_id,
+              action_type: action,
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+              action: "post",
+            },
+            success: function (json) {
+              $button.prop("disabled", false);
+              if (document.getElementById("cart_quantity")) {
+                document.getElementById("cart_quantity").textContent = json.qty;
+              }
+              // Update item quantity and total in the DOM
+              $button
+                .closest(".cart-row")
+                .find(".quantity")
+                .text(json.item_quantity);
+              $button
+                .closest(".cart-row")
+                .find("div:last p")
+                .text("$" + json.cart_total.toFixed(2));
+              // Update cart total in the table
+              $j("table .table h5 strong:last").text(
+                "$" + json.cart_total.toFixed(2)
+              );
+              // Remove row if quantity is 0
+              if (json.item_quantity <= 0) {
+                $button.closest(".cart-row").remove();
+              }
+            },
+            error: function (xhr, errmsg, err) {
+              $button.prop("disabled", false);
+              console.error(
+                "Error:",
+                xhr.responseJSON ? xhr.responseJSON.error : "Unknown error"
+              );
+              alert(
+                "Failed to update cart: " +
+                  (xhr.responseJSON ? xhr.responseJSON.error : "Unknown error")
+              );
+            },
+          });
+        });
+      });
+    </script>
     <!-- Core theme JS-->
-    <script src="{% static 'js/scripts.js' %}"></script>
   </body>
 </html>
