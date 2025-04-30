@@ -2,24 +2,27 @@ from django.db import models
 # Create your models here.
 from django.contrib.auth.models import User
 from .models import *  
-class category(models.Model):
-	name = models.CharField(max_length=200, null=True)
-	def __str__(self):
-		return self.name
 class Customer(models.Model):
 	fisrt_name = models.CharField(max_length=200, null=True)
 	last_name = models.CharField(max_length=200, null=True)
 	email = models.EmailField(max_length=200, null=True)
 	phone = models.CharField(max_length=200, null=True)
 	address = models.CharField(max_length=200, null=True)
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
 class Product(models.Model):
-    category = models.ForeignKey(category, on_delete=models.SET_NULL, null=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=200)
     price = models.FloatField()
-    descrption = models.CharField(max_length=200, null=True, blank=True)
-    image = models.ImageField(null=True, blank=True) 
+    description = models.CharField(max_length=200, null=True, blank=True)
+    image = models.ImageField(null=True, blank=True)
     Is_sale = models.BooleanField(default=False, null=True, blank=True)
     Sale_price = models.FloatField(null=True, blank=True)
+    
     def __str__(self):
         return self.name
     

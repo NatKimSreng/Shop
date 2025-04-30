@@ -1,3 +1,4 @@
+/* Base Styles */
 body {
   background-color: hsl(0, 0%, 98%);
 }
@@ -100,4 +101,220 @@ h6 {
 
 .hidden {
   display: none !important;
+}
+
+/* Product Card Styling */
+.card {
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Portrait phone image layout for listing page */
+.card-img-top {
+  width: auto;
+  height: 300px;
+  margin: 0 auto;
+  display: block;
+  object-fit: contain;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #eee;
+}
+
+/* Sale and regular prices */
+.text-danger {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.text-muted {
+  font-size: 1rem;
+  opacity: 0.75;
+  margin-right: 10px;
+}
+
+/* Buttons */
+.card-footer .btn {
+  min-width: 48%;
+  font-weight: 500;
+}
+
+/* Alert box styling */
+.alert-success {
+  font-size: 1.1rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 128, 0, 0.1);
+}
+
+/* Product Listing Page Styles */
+.sale-alert {
+  border-radius: 10px;
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.sale-alert h4 {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.product-card {
+  border: none;
+  border-radius: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.product-img {
+  height: 300px;
+  width: auto;
+  margin: 0 auto;
+  display: block;
+  object-fit: contain;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #eee;
+}
+
+.sale-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #dc3545;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 50px;
+  font-weight: 600;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
+.out-of-stock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.out-of-stock-text {
+  background-color: #6c757d;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+.card-text {
+  font-size: 1rem;
+}
+
+.out-of-stock {
+  color: #6c757d;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.card-footer {
+  padding: 0.75rem 1.25rem;
+  border-top: none;
+}
+
+.btn-outline-primary {
+  border-color: #007bff;
+  color: #007bff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-primary:hover:not(:disabled) {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-outline-primary:disabled {
+  border-color: #6c757d;
+  color: #6c757d;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-outline-success {
+  border-color: #28a745;
+  color: #28a745;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-success:hover {
+  background-color: #28a745;
+  color: white;
+}
+
+/* Product Detail Page Styles */
+.product-img {
+  max-height: 500px;
+  width: auto;
+  margin: 0 auto;
+  display: block;
+  object-fit: contain;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 767px) {
+  .card-img-top {
+    height: 220px;
+  }
+
+  .product-img {
+    max-height: 300px;
+    padding: 10px;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+  }
+
+  .sale-alert {
+    padding: 1rem;
+  }
+
+  .out-of-stock-text {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+  }
 }

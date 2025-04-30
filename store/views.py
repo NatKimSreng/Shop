@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect 
 from .models import *  
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -12,7 +12,7 @@ def store(request):
 	context = {'products':products}
 	return render(request, 'store/store.html', context)
 
-def cart(request):
+def carts(request):
 
 	if request.user.is_authenticated:
 		customer = request.user.customer
@@ -80,3 +80,18 @@ def registerPage(request):
         form = SignUpForm()
         context = {'form':form}
         return render(request, 'store/register.html', context)
+
+def product(request, pk):
+    product = Product.objects.get(id=pk)
+    context = {'product':product}
+    return render(request, 'store/product.html', context)
+
+def category(request, foo):
+    try:
+        category_obj = Category.objects.get(name=foo)
+        products = Product.objects.filter(category=category_obj)
+        context = {'products': products, 'category': category_obj}
+        return render(request, 'store/category.html', context)
+    except Category.DoesNotExist:
+        messages.error(request, 'Category does not exist')
+        return redirect('store')

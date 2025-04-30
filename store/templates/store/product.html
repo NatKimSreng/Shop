@@ -1,0 +1,74 @@
+{% extends 'store/main.html' %} {% block content %}
+
+<div class="container my-5">
+  <div class="row align-items-center">
+    <!-- Product Image -->
+    <div class="col-lg-6 mb-4">
+      <div class="position-relative box-element">
+        <img
+          src="{{ product.imageURL|default:'/static/images/placeholder.jpg' }}"
+          class="img-fluid product-img"
+          alt="{{ product.name }}"
+        />
+        {% if not product.Is_sale %}
+        <div class="out-of-stock-overlay">
+          <span class="out-of-stock-text">Out of Stock</span>
+        </div>
+        {% endif %} {% if product.Is_sale %}
+        <span class="sale-badge">Sale</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Product Details -->
+    <div class="col-lg-6">
+      <h2 class="card-title mb-3">{{ product.name }}</h2>
+      {% if product.Is_sale %}
+      <p class="card-text mb-3">
+        <span class="text-muted text-decoration-line-through fs-5"
+          >${{ product.price }}</span
+        >
+        <span class="fw-bold text-danger fs-4 ms-2"
+          >${{ product.Sale_price }}</span
+        >
+      </p>
+      {% else %}
+      <p class="card-text fw-bold text-muted out-of-stock fs-5 mb-3">
+        Out of Stock
+      </p>
+      {% endif %}
+      <!-- Product Description -->
+      <p class="text-muted mb-4 description">
+        {{ product.descrption}}
+      </p>
+      <!-- Optional Phone Specs -->
+      {% if product.Is_sale %}
+      <table class="table table-bordered mt-3">
+      {% endif %}
+      <!-- Add to Cart Button -->
+      <button
+        data-product="{{ product.id }}"
+        data-action="add"
+        class="btn btn-outline-primary update-cart mt-3 w-100"
+        {%
+        if
+        not
+        product.Is_sale
+        %}disabled{%
+        endif
+        %}
+        aria-label="{% if product.Is_sale %}Add {{ product.name }} to cart{% else %}{{ product.name }} is out of stock{% endif %}"
+      >
+        Add to Cart
+      </button>
+      <!-- Back to Products Link -->
+      <a
+        href="{% url 'store' %}"
+        class="btn btn-outline-secondary mt-3 w-100"
+        >Back to Products</a
+      >
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
