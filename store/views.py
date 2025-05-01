@@ -79,3 +79,8 @@ def category(request, foo):
     except Category.DoesNotExist:
         messages.error(request, 'Category does not exist')
         return redirect('store')
+    
+def home(request):
+    products = Product.objects.all()
+    context = {'products':products}
+    return render(request, 'store/home.html', context)
