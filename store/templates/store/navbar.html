@@ -1,32 +1,34 @@
-<!DOCTYPE html>
 {% load static %}
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <title>Ecom</title>
-
+    <meta charset="utf-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Django Ecommerce</title>
+    <!-- Favicon-->
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
       crossorigin="anonymous"
     />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
     <link
       rel="icon"
       type="images/png"
       href="{% static 'favicon/apple-touch-icon.png' %}"
     />
-    <script src="{% static 'js/cart.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="{% url 'store' %}">Ecom</a>
+      <a class="navbar-brand" href="{% url 'home' %}">Ecom</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -41,31 +43,85 @@
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">Home</a>
+          </li>
           <li class="nav-item active">
             <a class="nav-link" href="{% url 'store' %}"
               >Store <span class="sr-only">(current)</span></a
             >
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'category' 'Iphone' %}">Iphone</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'category' 'Pixel' %}">Pixel</a>
+          </li>
+          <li class="nav-item">
+            <a href="{% url 'update_user' %}" class="nav-link"
+            >Profile</a
+          >
+          </li>
         </ul>
+
         <div class="form-inline my-2 my-lg-0">
           {% if user.is_authenticated %}
+          <a href="{% url 'update_user' %}" class="btn btn-primary"><i class="bi bi-person-circle"></i>{{user}}</a>
           <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
           {% else %}
           <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
           {% endif %}
-          <a href="{% url 'cart' %}">
+          <a href="{% url 'cart_summary' %}">
             <img id="cart-icon" src="{% static 'images/cart.png' %}" />
           </a>
-          <p id="cart-total">{{item.quantity}}</p>
+
+          <span
+            class="badge bg-dark text-white ms-1 rounded-pill"
+            id="cart_quantity"
+            >{{ cart|length }}
+          </span>
         </div>
       </div>
     </nav>
 
-    <div class="container">
-      <br />
-      {% block content %} {% endblock content %}
+    {% if messages %} {% for message in messages %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+      ></button>
+    </div>
+    {% endfor %} {% endif %} {% block content %} {% endblock %}
+
+
+    {% comment %} footer {% endcomment %}
+    
+  <!-- Back to top button -->
+    <div class="position-fixed bottom-0 end-0 p-3">
+        <button type="button" class="btn btn-primary rounded-circle shadow" id="backToTopBtn" 
+                onclick="window.scrollTo({top: 0, behavior: 'smooth'})" 
+                style="width: 45px; height: 45px; display: none;">
+            <i class="bi bi-arrow-up"></i>
+        </button>
     </div>
 
+    <!-- Script for back to top button -->
+    <script>
+        // Back to top button logic
+        window.onscroll = function() {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                document.getElementById("backToTopBtn").style.display = "block";
+            } else {
+                document.getElementById("backToTopBtn").style.display = "none";
+            }
+        };
+    </script>
+     </div>
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script
       src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
       integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
@@ -83,5 +139,165 @@
       integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
       crossorigin="anonymous"
     ></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      var $j = jQuery.noConflict();
+    </script>
+    <script>
+      const cartUpdateUrl = "{% url 'cart_update' %}";
+      const cartDeleteUrl = "{% url 'cart_delete' %}";
+      const csrfToken = "{{ csrf_token }}";
+      var $j = jQuery.noConflict();
+      $j(document).ready(function () {
+        // Add to Cart (product listing and detail pages)
+        $j(document).on("click", ".add-cart", function (e) {
+          e.preventDefault();
+          var $button = $j(this);
+          var product_id = $button.val();
+          var product_qty = $j("#qty-cart").length ? $j("#qty-cart").val() : 1;
+
+          if (
+            !product_id ||
+            !product_qty ||
+            isNaN(product_qty) ||
+            product_qty < 1
+          ) {
+            console.error("Invalid product ID or quantity", {
+              product_id,
+              product_qty,
+            });
+            alert("Please select a valid product and quantity.");
+            return;
+          }
+
+          $button.prop("disabled", true).text("Adding...");
+          $j.ajax({
+            type: "POST",
+            url: '{% url "cart_add" %}',
+            data: {
+              product_id: product_id,
+              product_qty: product_qty,
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+              action: "post",
+            },
+            success: function (json) {
+              $button.prop("disabled", false).text("Add to Cart");
+              if (document.getElementById("cart_quantity")) {
+                document.getElementById("cart_quantity").textContent = json.qty;
+              }
+              alert("Product added to cart!");
+            },
+            error: function (xhr, errmsg, err) {
+              $button.prop("disabled", false).text("Add to Cart");
+              console.error(
+                "Error:",
+                xhr.responseJSON ? xhr.responseJSON.error : "Unknown error"
+              );
+              alert(
+                "Failed to add to cart: " +
+                  (xhr.responseJSON ? xhr.responseJSON.error : "Unknown error")
+              );
+            },
+          });
+        });
+        $j(document).on("click", ".delete-cart", function (e) {
+          e.preventDefault();
+          const $button = $j(this);
+          const product_id = $button.data("product-id");
+          const action = $button.data("action");
+
+          if (!product_id || !action) {
+            console.error("Missing product_id or action");
+            alert("Invalid product or action.");
+            return;
+          }
+
+          $button.addClass("loading").prop("disabled", true);
+
+          $j.ajax({
+            type: "POST",
+            url: "{% url 'cart_delete' %}",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" },
+            data: {
+              product_id: product_id,
+              action: action,
+            },
+            dataType: "json",
+            success: function (json) {
+              $button.removeClass("loading").prop("disabled", false);
+              if (!json.success) {
+                alert(json.error || "An error occurred.");
+                return;
+              }
+              location.reload();
+            },
+
+            error: function (xhr) {
+              $button.removeClass("loading").prop("disabled", false);
+              const errorMsg =
+                xhr.responseJSON?.error ||
+                "An error occurred. Please try again.";
+              console.error("Error:", errorMsg);
+              alert(errorMsg);
+            },
+          });
+        });
+        // Update Cart (cart summary page)
+        $j(document).on("click", ".update-cart", function (e) {
+          e.preventDefault();
+          var $button = $j(this);
+          var product_id = $button.data("product-id");
+          var action = $button.data("action");
+
+          $button.prop("disabled", true);
+          $j.ajax({
+            type: "POST",
+            url: '{% url "cart_update" %}',
+            data: {
+              product_id: product_id,
+              action_type: action,
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+              action: "post",
+            },
+            success: function (json) {
+              $button.prop("disabled", false);
+              if (document.getElementById("cart_quantity")) {
+                document.getElementById("cart_quantity").textContent = json.qty;
+              }
+              // Update item quantity and total in the DOM
+              $button
+                .closest(".cart-row")
+                .find(".quantity")
+                .text(json.item_quantity);
+              $button
+                .closest(".cart-row")
+                .find("div:last p")
+                .text("$" + json.cart_total.toFixed(2));
+              // Update cart total in the table
+              $j("table .table h5 strong:last").text(
+                "$" + json.cart_total.toFixed(2)
+              );
+              // Remove row if quantity is 0
+              if (json.item_quantity <= 0) {
+                $button.closest(".cart-row").remove();
+              }
+              location.reload();
+            },
+            error: function (xhr, errmsg, err) {
+              $button.prop("disabled", false);
+              console.error(
+                "Error:",
+                xhr.responseJSON ? xhr.responseJSON.error : "Unknown error"
+              );
+              alert(
+                "Failed to update cart: " +
+                  (xhr.responseJSON ? xhr.responseJSON.error : "Unknown error")
+              );
+            },
+          });
+        });
+      });
+    </script>
+    <!-- Core theme JS-->
   </body>
 </html>
