@@ -66,10 +66,12 @@
         <div class="text-center mt-3">
           <p class="text-muted">
             Don't have an account?
-            <a href="#" class="text-primary">Sign Up</a>
+            <a href="{% url 'register' %}" class="text-primary">Sign Up</a>
           </p>
           <p class="text-muted">
-            <a href="#" class="text-primary">Forgot Password?</a>
+            <a href="{% url 'update_password'%}" class="text-primary"
+              >Forgot Password?</a
+            >
           </p>
         </div>
       </div>

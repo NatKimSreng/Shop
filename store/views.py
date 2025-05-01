@@ -5,8 +5,25 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
-from .forms import SignUpForm
+from .forms import SignUpForm, UpdateUserForm, ChangePasswordForm, UserInfoForm
 # Create your views here.
+def update_user(request):
+    if request.user.is_authenticated:
+        current_user = User.objects.get(id=request.user.id)
+        user_form = UpdateUserForm(request.POST or None , instance=current_user)
+        
+        if user_form.is_valid():
+            user_form.save()
+            login(request, current_user)
+            messages.success(request, 'User updated')
+            return redirect('store')
+        return render(request, 'store/update_user.html', {'user_form': user_form})
+    else:
+        messages.error(request, 'You need to be logged in to update your profile')
+        return redirect('login')
+    return render(request, 'store/update_user.html')
+    
+
 def store(request):
 	products = Product.objects.all()
 	context = {'products':products}
@@ -84,3 +101,25 @@ def home(request):
     products = Product.objects.all()
     context = {'products':products}
     return render(request, 'store/home.html', context)
+
+def update_password(request):
+    if request.user.is_authenticated:
+       current_user = request.user
+       if request.method == 'POST':
+           form = ChangePasswordForm(current_user, request.POST)
+           if form.is_valid():
+               form.save()
+               messages.success(request, 'Password updated')
+               login(request, current_user)
+               return redirect('store')
+           else:
+               for error in list (form.errors.values()):
+                   messages.error(request, error)
+       else:
+            form = ChangePasswordForm(current_user)
+            return render(request, 'store/update_password.html', {'form': form})
+    else:
+        messages.error(request, 'You need to be logged in to update your password')
+        return redirect('login')
+            
+    return render(request, 'store/update_password.html', context) 
