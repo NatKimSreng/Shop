@@ -89,7 +89,7 @@ def cart_update(request):
                 'qty': cart_quantity,
                 'item_quantity': item_quantity,
                 'cart_total': cart_total,
-                'success': True
+                'success': True,
             })
 
         except ValueError:

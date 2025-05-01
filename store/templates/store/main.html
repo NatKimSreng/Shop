@@ -201,6 +201,7 @@
               if (json.item_quantity <= 0) {
                 $button.closest(".cart-row").remove();
               }
+              location.reload();
             },
             error: function (xhr, errmsg, err) {
               $button.prop("disabled", false);
