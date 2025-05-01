@@ -24,11 +24,9 @@
           {% if product.Is_sale %}
           <p class="card-text">
             <span class="text-muted text-decoration-line-through"
-              >${{ product.price }}</span
-            >
-            <span class="fw-bold text-danger ms-2"
               >${{ product.Sale_price }}</span
             >
+            <span class="fw-bold text-danger ms-2">${{ product.price }}</span>
           </p>
           {% else %}
           <p class="card-text fw-bold text-muted out-of-stock">Out of Stock</p>
@@ -104,7 +102,6 @@
           if (document.getElementById("cart_quantity")) {
             document.getElementById("cart_quantity").textContent = json.qty;
           }
-          alert("Product added to cart!");
         },
         error: function (xhr, errmsg, err) {
           $button.prop("disabled", false).text("Add to Cart");

@@ -138,3 +138,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 CART_SESSION_ID = 'cart'
+CSRF_COOKIE_SECURE = False  # Set to True in production
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']

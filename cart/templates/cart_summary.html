@@ -1,4 +1,4 @@
-{% extends 'store/main.html' %}{% load static %} {% block content %}
+{% extends 'store/main.html' %} {% load static %} {% block content %}
 <div class="row">
   <div class="col-lg-12">
     <div class="box-element">
@@ -41,7 +41,7 @@
         <div style="flex: 1"><strong>Quantity</strong></div>
         <div style="flex: 1"><strong>Total</strong></div>
       </div>
-      {% for item in items %}
+      {% if items %} {% for item in items %}
       <div class="cart-row" data-product-id="{{item.product.id}}">
         <div style="flex: 2">
           <img class="row-image" src="{{item.product.imageURL}}" />
@@ -69,16 +69,21 @@
         </div>
         <div style="flex: 1">
           <p class="item-total">${{item.get_total|floatformat:2}}</p>
-          <button
-            class="btn btn-danger btn-sm delete-cart"
-            data-product-id="{{item.product.id}}"
-          >
+          <button class="btn btn-danger btn-sm delete-cart" data-product-id="{{item.product.id}}" data-action="post">
             Remove
           </button>
         </div>
       </div>
       {% endfor %}
+      {% else %}
+      <div class="cart-row empty-cart-container">
+        <p class="empty-cart text-center">
+          Your cart is empty. Please add items to your cart.
+        </p>
+      </div>
+      {% endif %}
+      </div>
+      {% endblock content %}
     </div>
   </div>
 </div>
-{% endblock content %}

@@ -23,42 +23,141 @@
           <h5 class="card-title">{{ product.name }}</h5>
           {% if product.Is_sale %}
           <p class="card-text">
-            <span class="text-muted text-decoration-line-through"
-              >${{ product.price }}</span
-            >
-            <span class="fw-bold text-danger ms-2"
-              >${{ product.Sale_price }}</span
-            >
+            <p class="card-text">
+              <span class="text-muted text-decoration-line-through"
+                >${{ product.Sale_price }}</span
+              >
+              <span class="fw-bold text-danger ms-2">${{ product.price }}</span>
+            </p>
           </p>
           {% else %}
           <p class="card-text fw-bold text-muted out-of-stock">Out of Stock</p>
           {% endif %}
         </div>
         <div class="card-footer d-flex justify-content-between bg-transparent">
+          {% if product.Is_sale %}
           <button
-            data-product="{{ product.id }}"
-            data-action="add"
-            class="btn btn-outline-primary update-cart"
-            {%
-            if
-            not
-            product.Is_sale
-            %}disabled{%
-            endif
-            %}
+            type="button"
+            value="{{ product.id }}"
+            class="btn btn-secondary add-cart"
+            data-product-id="{{ product.id }}"
           >
             Add to Cart
           </button>
+          {% else %}
+          <button type="button" class="btn btn-secondary" disabled>
+            Out of Stock
+          </button>
+          {% endif %}
           <a
             class="btn btn-outline-success"
             href="{% url 'product' product.id %}"
-            >View</a
           >
+            View
+          </a>
         </div>
       </div>
     </div>
     {% endfor %}
   </div>
 </div>
+<!-- In store/main.html, before </body> -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  var $j = jQuery.noConflict();
+  $j(document).ready(function () {
+    $j(document).on("click", ".add-cart", function (e) {
+      e.preventDefault();
 
+      var $button = $j(this);
+      var product_id = $button.val();
+      // Default to 1 if no quantity selector exists (e.g., product listing page)
+      var product_qty = $j("#qty-cart").length ? $j("#qty-cart").val() : 1;
+
+      if (
+        !product_id ||
+        !product_qty ||
+        isNaN(product_qty) ||
+        product_qty < 1
+      ) {
+        console.error("Invalid product ID or quantity", {
+          product_id,
+          product_qty,
+        });
+        alert("Please select a valid product and quantity.");
+        return;
+      }
+
+      $button.prop("disabled", true).text("Adding...");
+
+      $j.ajax({
+        type: "POST",
+        url: '{% url "cart_add" %}',
+        data: {
+          product_id: product_id,
+          product_qty: product_qty,
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+          action: "post",
+        },
+        success: function (json) {
+          $button.prop("disabled", false).text("Add to Cart");
+          if (document.getElementById("cart_quantity")) {
+            document.getElementById("cart_quantity").textContent = json.qty;
+          }
+        },
+        error: function (xhr, errmsg, err) {
+          $button.prop("disabled", false).text("Add to Cart");
+          console.error(
+            "Error:",
+            xhr.responseJSON ? xhr.responseJSON.error : "Unknown error"
+          );
+          alert(
+            "Failed to add to cart: " +
+              (xhr.responseJSON ? xhr.responseJSON.error : "Unknown error")
+          );
+        },
+        $j(document).on("click", ".delete-cart", function (e) {
+  e.preventDefault();
+  const $button = $j(this);
+  const product_id = $button.data("product-id");
+  if (!product_id) {
+    console.error("Missing product_id");
+    alert("Invalid product.");
+    return;
+  }
+  $button.addClass("loading").prop("disabled", true);
+  $j.ajax({
+    type: "POST",
+    url: cartDeleteUrl, // Resolves to /cart/delete/
+    headers: { "X-CSRFToken": csrfToken },
+    data: { product_id: product_id },
+    dataType: "json",
+    success: function (json) {
+      $button.removeClass("loading").prop("disabled", false);
+      if (!json.success) {
+        alert(json.error || "An error occurred.");
+        return;
+      }
+      const cartQuantity = document.getElementById("cart-items");
+      if (cartQuantity) {
+        cartQuantity.textContent = parseInt(json.qty, 10) || 0;
+      }
+      const cartTotal = document.getElementById("cart-total");
+      if (cartTotal) {
+        cartTotal.textContent = "$" + (parseFloat(json.cart_total) || 0).toFixed(2);
+      }
+      $button.closest(".cart-row").remove();
+    },
+    error: function (xhr) {
+      $button.removeClass("loading").prop("disabled", false);
+      const errorMsg = xhr.responseJSON?.error || "An error occurred. Please try again.";
+      console.error("Error:", errorMsg);
+      alert(errorMsg);
+    }
+  });
+});
+      });
+    });
+  });
+</script>
 {% endblock content %}

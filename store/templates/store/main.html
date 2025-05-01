@@ -58,6 +58,12 @@
 
         <div class="form-inline my-2 my-lg-0">
           {% if user.is_authenticated %}
+          <a href="#" class="btn btn-primary"
+            ><img
+              id="cart-icon"
+              src="{% static 'images/user.png' %}"
+            />{{user}}</a
+          >
           <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
           {% else %}
           <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
@@ -108,6 +114,12 @@
     ></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+      var $j = jQuery.noConflict();
+    </script>
+    <script>
+      const cartUpdateUrl = "{% url 'cart_update' %}";
+      const cartDeleteUrl = "{% url 'cart_delete' %}";
+      const csrfToken = "{{ csrf_token }}";
       var $j = jQuery.noConflict();
       $j(document).ready(function () {
         // Add to Cart (product listing and detail pages)
@@ -161,7 +173,48 @@
             },
           });
         });
+        $j(document).on("click", ".delete-cart", function (e) {
+          e.preventDefault();
+          const $button = $j(this);
+          const product_id = $button.data("product-id");
+          const action = $button.data("action");
 
+          if (!product_id || !action) {
+            console.error("Missing product_id or action");
+            alert("Invalid product or action.");
+            return;
+          }
+
+          $button.addClass("loading").prop("disabled", true);
+
+          $j.ajax({
+            type: "POST",
+            url: "{% url 'cart_delete' %}",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" },
+            data: {
+              product_id: product_id,
+              action: action,
+            },
+            dataType: "json",
+            success: function (json) {
+              $button.removeClass("loading").prop("disabled", false);
+              if (!json.success) {
+                alert(json.error || "An error occurred.");
+                return;
+              }
+              location.reload();
+            },
+
+            error: function (xhr) {
+              $button.removeClass("loading").prop("disabled", false);
+              const errorMsg =
+                xhr.responseJSON?.error ||
+                "An error occurred. Please try again.";
+              console.error("Error:", errorMsg);
+              alert(errorMsg);
+            },
+          });
+        });
         // Update Cart (cart summary page)
         $j(document).on("click", ".update-cart", function (e) {
           e.preventDefault();

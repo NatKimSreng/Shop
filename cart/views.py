@@ -101,29 +101,23 @@ def cart_update(request):
 
 def cart_delete(request):
     cart = Cart(request)
-
-    if request.POST.get('action') == 'post':
+    if request.method == 'POST':
         try:
             product_id = request.POST.get('product_id')
             if not product_id:
                 return JsonResponse({'error': 'Product ID is required'}, status=400)
-
             product_id = int(product_id)
             product = get_object_or_404(Product, id=product_id)
-
             cart.remove(product=product)
             cart_quantity = cart.__len__()
-            cart_total = float(cart.get_total_price())
-
+            cart_total = float(cart.get_total_price() or 0)
             return JsonResponse({
                 'qty': cart_quantity,
                 'cart_total': cart_total,
                 'success': True
             })
-
         except ValueError:
             return JsonResponse({'error': 'Invalid product ID'}, status=400)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-
-    return JsonResponse({'error': 'Invalid action or request'}, status=400)
+            return JsonResponse({'error': str(e)}, status=500)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
