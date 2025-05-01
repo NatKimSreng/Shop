@@ -1,0 +1,346 @@
+{% extends 'store/main.html' %} {% load static %} {% block content %}
+<div
+  id="carouselExampleAutoplaying"
+  class="carousel slide"
+  data-bs-ride="carousel"
+>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img
+        src="{%static 'images/vivo.jpg' %}"
+        class="d-block w-100"
+        alt="vivo_slide"
+      />
+      <div class="carousel-caption d-none d-md-block"></div>
+    </div>
+    <div class="carousel-item">
+      <img
+        src="https://images.samsung.com/is/image/samsung/assets/ie/2501/pfs/01-hd01-P3-KV-pc-1440x640_LTR_v1.jpg?imwidth=2560"
+        class="d-block w-100"
+        alt="samsung_slide"
+      />
+    </div>
+    <div class="carousel-item">
+      <img
+        src="{%static 'images/pixel_slide.avif' %}"
+        class="d-block w-100"
+        alt="pixel_slide"
+      />
+    </div>
+    <div class="carousel-item">
+      <img
+        src="{%static 'images/oppo_slide.webp' %}"
+        class="d-block w-100"
+        alt="oppo_slide"
+      />
+    </div>
+    <div class="carousel-item">
+      <img
+        src="{%static 'images/rog_slide.jpg' %}"
+        class="d-block w-100"
+        alt="rog_slide"
+      />
+    </div>
+  </div>
+  <button
+    class="carousel-control-prev"
+    type="button"
+    data-bs-target="#carouselExampleAutoplaying"
+    data-bs-slide="prev"
+  >
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button
+    class="carousel-control-next"
+    type="button"
+    data-bs-target="#carouselExampleAutoplaying"
+    data-bs-slide="next"
+  >
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+<div class="container mt-5">
+  <div class="row">
+    <div style="font-family: Detroit" class="text-center">
+      <h1 class="text-uppercase text-dark">Welcome to Otdeng Store</h1>
+      <p class="fs-5">
+        Discover the ultimate destination for all your smartphone needs at
+        OTDENG STORE, your premier e-commerce platform for cutting-edge mobile
+        devices! We’re thrilled to bring you a curated selection of the latest
+        phones from top brands, packed with innovative features to keep you
+        connected, productive, and entertained. Whether you’re hunting for a
+        sleek flagship model, a budget-friendly gem, or the perfect accessories
+        to complement your device, OTDENG STORE has it all. Enjoy seamless
+        shopping with competitive prices, fast shipping, and exceptional
+        customer support. Dive into the future of mobile technology
+        today—welcome to the OTDENG family, where your perfect phone awaits!
+      </p>
+    </div>
+  </div>
+</div>
+<div class="container-fluid mt-5 p-0">
+  <div class="row">
+    <div class="col-md-6 col-sm-12 m-0 p-0 position-relative">
+      <img
+        class="w-100 h-100"
+        src="{%static 'images/samsung_4.jpg' %}"
+        alt=""
+      />
+      <div
+        class="position-absolute text-overlay bottom-0 start-0 p-5 text-white d-none d-sm-block"
+      >
+        <h3 class="fw-bold">Samsung</h3>
+        <p class="mb-3">Sigma</p>
+        <a id="btn" href="#" class="btn btn-outline-light rounded-pill">Shop</a>
+      </div>
+    </div>
+    <div class="col-md-6 col-sm-12 m-0 p-0 position-relative">
+      <img class="w-100 h-100" src="{%static 'images/rog_2.jpg' %}" alt="" />
+      <div
+        class="position-absolute text-overlay bottom-0 start-0 text-white p-5 d-none d-sm-block"
+        style="bottom: 50px; left: 50px"
+      >
+        <h3 class="fw-bold">ROG Gaming Phones</h3>
+        <p class="mb-3">Sigma</p>
+        <a id="btn" href="#" class="btn btn-outline-light rounded-pill">Shop</a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 col-sm-12 m-0 p-0 order-md-2 position-relative">
+      <img class="w-100 h-100" src="{% static 'images/iphones.jpg' %}" alt="" />
+      <div
+        class="position-absolute text-overlay bottom-0 start-0 text-white p-5 d-none d-sm-block"
+        style="bottom: 50px; left: 50px"
+      >
+        <h3 class="fw-bold">Iphones</h3>
+        <p class="mb-3">Sigma</p>
+        <a id="btn" href="#" class="btn btn-outline-light rounded-pill">Shop</a>
+      </div>
+    </div>
+    <div class="col-md-6 col-sm-12 m-0 p-0 order-md-1 position-relative">
+      <img class="w-100 h-100" src="{%static 'images/pixel_1.jpg' %}" alt="" />
+      <div
+        class="position-absolute text-overlay bottom-0 start-0 text-white p-5 d-none d-sm-block"
+        style="bottom: 50px; left: 50px"
+      >
+        <h3 class="fw-bold">Google Pixel</h3>
+        <p class="mb-3">Sigma</p>
+        <a id="btn" href="#" class="btn btn-outline-light rounded-pill">Shop</a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 col-sm-12 m-0 p-0 order-md-2 position-relative">
+      <img class="w-100 h-100" src="{% static 'images/vivo_2.jpg' %}" alt="" />
+      <div
+        class="position-absolute text-overlay bottom-0 start-0 text-white p-5 d-none d-sm-block"
+        style="bottom: 50px; left: 50px"
+      >
+        <h3 class="fw-bold">Vivo</h3>
+        <p class="mb-3">Sigma</p>
+        <a id="btn" href="#" class="btn btn-outline-light rounded-pill">Shop</a>
+      </div>
+    </div>
+    <div class="col-md-6 col-sm-12 m-0 p-0 order-md-1 position-relative">
+      <img class="w-100 h-100" src="{%static 'images/oppo_2.avif' %}" alt="" />
+      <div
+        class="position-absolute text-overlay bottom-0 start-0 text-white p-5 d-none d-sm-block"
+        style="bottom: 50px; left: 50px"
+      >
+        <h3 class="fw-bold">Oppo Flip</h3>
+        <p class="mb-3">Sigma</p>
+        <a id="btn" href="#" class="btn btn-outline-light rounded-pill">Shop</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt-5 p-0 mb-5">
+  <div class="row g-3">
+    <!-- Left Section (Tall Image with Caption) -->
+    <div class="col-md-6 col-lg-4 m-0 p-0 position-relative">
+      <img
+        class="w-100 h-100 object-fit-cover"
+        src="{% static 'images/iphone16.jpg' %}"
+        alt="Phone Category"
+      />
+      <div
+        class="position-absolute text-overlay bottom-0 start-0 text-dark p-5 d-sm-block"
+      >
+        <h3 class="fw-bold">Explore iPhones</h3>
+        <p class="mb-3">Latest Models</p>
+        <a
+          id="btn"
+          href="#"
+          class="btn btn-outline-dark text-bg-white rounded-pill"
+          >Shop</a
+        >
+      </div>
+    </div>
+
+    <!-- Right Sections (Stacked) -->
+    <div class="col-md-6 col-lg-8 d-flex flex-column m-0 p-0 overflow-hidden">
+      <!-- Top Section (Welcome Banner) -->
+      <div class="row">
+        <div class="col-12 m-0 p-0 position-relative mb-3">
+          <img
+            class="w-100"
+            style="height: 50vh; object-fit: cover"
+            src="{% static 'images/iphone_por.jpg' %}"
+            alt="Welcome Banner"
+          />
+          <div
+            class="position-absolute text-overlay top-50 start-50 translate-middle text-center text-white p-5"
+          >
+            <!-- <h1 class="fw-bold">Welcome to OTDENG STORE</h1> -->
+            <p class="mb-3">Discover the Latest Smartphones</p>
+            <a id="btn" href="#" class="btn btn-outline-light rounded-pill"
+              >Shop</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Section (iPhone 16 Banner) -->
+      <div class="row">
+        <div class="col-12 m-0 p-0 position-relative">
+          <img
+            class="w-100"
+            style="height: 50vh; object-fit: cover"
+            src="{% static 'images/iphone_por.jpg' %}"
+            alt="iPhone 16 Banner"
+          />
+          <div
+            class="position-absolute text-overlay top-50 start-50 translate-middle text-center text-white p-5"
+          >
+            <h1 class="fw-bold">iPhone 16</h1>
+            <p class="mb-3">Discover the Latest Smartphones</p>
+            <a id="btn" href="#" class="btn btn-outline-light rounded-pill"
+              >Shop</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% comment %} new arrival {% endcomment %}
+<div id="newarrival" class="container-fluid my-5 p-5">
+  <div style="font-family: Detroit" class="text-center text-uppercase">
+    <h1 class="text-secondary">New Arrivals</h1>
+    <p style="text-align: center, width: 100px">
+      Discover the latest arrivals at OTDENG STORE – bold styles, premium
+      quality, and unbeatable vibes. Shop now and elevate your wardrobe with the
+      newest trends!
+    </p>
+  </div>
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="col">
+      <div class="card h-100 shadow">
+        <img
+          src="{% static 'images/iphones.jpg' %}"
+          class="card-img-top"
+          alt="iphone"
+        />
+        <div id="color" class="card-body p-4">
+          <h5 class="card-title">Iphone 16 Titanium</h5>
+          <p class="card-text">
+            Experience brilliance with the iPhone 16! Stunning display, A18
+            chip, and cutting-edge camera tech await.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card w-100 h-100 shadow">
+        <img
+          src="{% static 'images/pixel_1.jpg' %}"
+          class="card-img-top"
+          alt="pixel"
+        />
+        <div id="color" class="card-body p-4">
+          <h5 class="card-title">Google Pixel 9 Pro XL</h5>
+          <p class="card-text">
+            Meet the Google Pixel 9 Pro XL – epic AI features, pro-level
+            photography, and seamless performance.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card w-100 h-100 shadow">
+        <img
+          style="object-fit: cover"
+          src="{% static 'images/oppo_1.jpg' %}"
+          class="card-img-top"
+          alt="oppo"
+        />
+        <div id="color" class="card-body p-4">
+          <h5 class="card-title">Oppo Reno13 Series</h5>
+          <p class="card-text">
+            Discover the OPPO Reno13 Series! Sleek design, AI-powered
+            photography, and a vibrant 120Hz display.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row row-cols-1 row-cols-md-3 g-4 mt-5">
+    <div class="col">
+      <div class="card h-100 shadow">
+        <img
+          src="{% static 'images/samsung_2.jpg' %}"
+          class="card-img-top"
+          alt="samsung"
+        />
+        <div id="color" class="card-body p-4">
+          <h5 class="card-title">Samsung S24 Ultra</h5>
+          <p class="card-text">
+            Unleash power with the Samsung S24 Ultra! Massive AMOLED display, S
+            Pen precision, and top-tier cameras.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card w-100 h-100 shadow">
+        <img
+          src="{% static 'images/vivo_1.jpg' %}"
+          class="card-img-top"
+          alt="vivo"
+        />
+        <div id="color" class="card-body p-4">
+          <h5 class="card-title">Vivo V50</h5>
+          <p class="card-text">
+            Elevate your style with the Vivo V50! Crystal-clear visuals,
+            blazing-fast performance, and pro-grade cameras.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card w-100 h-100 shadow">
+        <img
+          style="object-fit: cover"
+          src="{% static 'images/rog_3.jpg' %}"
+          class="card-img-top"
+          alt="rog"
+        />
+        <div id="color" class="card-body p-4">
+          <h5 class="card-title">Asus ROG 8 Pro</h5>
+          <p class="card-text">
+            Game on with the ASUS ROG 8 Pro! Unrivaled power, 185Hz display, and
+            epic cooling tech.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
