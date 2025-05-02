@@ -84,17 +84,28 @@
             </div>
             <!-- Center: Search -->
             <div class="col-md-4">
-              <form class="d-flex input-group w-auto my-auto mb-3 mb-md-0">
+              <form
+                method="POST"
+                action="{% url 'search' %}"
+                class="d-flex input-group w-auto my-auto mb-3 mb-md-0"
+                onsubmit="return this.querySelector('input[name=searched]').value.trim() !== ''"
+              >
+                {% csrf_token %}
                 <input
                   autocomplete="off"
                   type="search"
-                  class="form-control rounded"
+                  class="form-control form-control-lg rounded-start"
                   placeholder="Search"
                   aria-label="Search products"
+                  name="searched"
                 />
-                <span class="input-group-text border-0 d-none d-lg-flex"
-                  ><i class="bi bi-search"></i
-                ></span>
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  aria-label="Submit search"
+                >
+                  <i class="bi bi-search"></i>
+                </button>
               </form>
             </div>
             <!-- Right: Cart, User -->

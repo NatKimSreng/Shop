@@ -1,64 +1,141 @@
 {% extends 'store/main.html' %} {% block content %}
-<div class="container">
-  <div class="row">
+
+<div class="container py-4">
+  <div class="row g-4">
     {% for product in products %}
-    <div class="col-lg-4 col-md-6 mb-4">
-      <div class="card h-100 shadow-sm product-card">
+    <div class="col-md-6 col-lg-4">
+      <div
+        class="card h-100 shadow-sm border-0 rounded-3 product-card transition-all"
+      >
+        <!-- Sale badge -->
         {% if product.Is_sale %}
-        <span class="sale-badge">Sale</span>
+        <div
+          class="badge bg-danger text-white position-absolute px-3 py-2 rounded-pill"
+          style="top: 1rem; right: 1rem; z-index: 1"
+        >
+          SALE
+        </div>
         {% endif %}
-        <div class="position-relative">
+
+        <!-- Product image with hover effect -->
+        <div class="overflow-hidden rounded-top position-relative">
           <img
-            src="{{ product.imageURL }}"
             class="card-img-top product-img"
+            src="{{ product.imageURL|default:'/static/images/placeholder.jpg' }}"
             alt="{{ product.name }}"
+            style="
+              object-fit: cover;
+              height: 220px;
+              transition: transform 0.3s ease;
+            "
+            onmouseover="this.style.transform='scale(1.05)'"
+            onmouseout="this.style.transform='scale(1)'"
           />
+          <!-- Out of stock overlay -->
           {% if not product.Is_sale %}
-          <div class="out-of-stock-overlay">
-            <span class="out-of-stock-text">Out of Stock</span>
+          <div
+            class="out-of-stock-overlay d-flex align-items-center justify-content-center position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"
+          >
+            <span class="out-of-stock-text text-white fw-bold"
+              >Out of Stock</span
+            >
           </div>
           {% endif %}
         </div>
-        <div class="card-body">
-          <h5 class="card-title">{{ product.name }}</h5>
-          {% if product.Is_sale %}
-          <p class="card-text">
-            <span class="text-muted text-decoration-line-through"
-              >${{ product.Sale_price }}</span
+
+        <!-- Product details -->
+        <div class="card-body p-4">
+          <div class="text-center">
+            <!-- Product name -->
+            <h5 class="fw-bolder mb-3">{{ product.name }}</h5>
+
+            <!-- Sale indicator with stars for sale items -->
+            {% if product.Is_sale %}
+            <div
+              class="d-flex justify-content-center align-items-center small text-warning mb-3"
             >
-            <span class="fw-bold text-danger ms-2">${{ product.price }}</span>
-          </p>
-          {% else %}
-          <p class="card-text fw-bold text-muted out-of-stock">Out of Stock</p>
-          {% endif %}
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill mx-1"></i>
+              <span class="badge bg-warning text-dark mx-2 px-2 py-1"
+                >Special Offer</span
+              >
+              <i class="bi bi-star-fill mx-1"></i>
+              <i class="bi bi-star-fill"></i>
+            </div>
+            {% endif %}
+
+            <!-- Product price -->
+            {% if product.Is_sale %}
+            <div class="mb-3">
+              <span class="text-muted text-decoration-line-through me-2"
+                >${{ product.Sale_price }}</span
+              >
+              <span class="fw-bold text-danger fs-5">${{ product.price }}</span>
+            </div>
+            {% else %}
+            <div class="mb-3">
+              <span class="fw-bold fs-5 text-muted">Out of Stock</span>
+            </div>
+            {% endif %}
+          </div>
         </div>
-        <div class="card-footer d-flex justify-content-between bg-transparent">
-          {% if product.Is_sale %}
-          <button
-            type="button"
-            value="{{ product.id }}"
-            class="btn btn-secondary add-cart"
-            data-product-id="{{ product.id }}"
-          >
-            Add to Cart
-          </button>
-          {% else %}
-          <button type="button" class="btn btn-secondary" disabled>
-            Out of Stock
-          </button>
-          {% endif %}
-          <a
-            class="btn btn-outline-success"
-            href="{% url 'product' product.id %}"
-          >
-            View
-          </a>
+
+        <!-- Product actions -->
+        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+          <div class="text-center d-flex justify-content-center gap-2">
+            {% if product.Is_sale %}
+            <button
+              type="button"
+              value="{{ product.id }}"
+              class="btn btn-outline-primary rounded-pill px-4 py-2 add-cart"
+              data-product-id="{{ product.id }}"
+            >
+              <i class="bi bi-cart me-2"></i>Add to Cart
+            </button>
+            {% else %}
+            <button
+              type="button"
+              class="btn btn-outline-dark rounded-pill px-4 py-2"
+              disabled
+              aria-disabled="true"
+            >
+              <i class="bi bi-cart me-2"></i>Out of Stock
+            </button>
+            {% endif %}
+            <a
+              class="btn btn-outline-primary rounded-pill px-4 py-2"
+              href="{% url 'product' product.id %}"
+            >
+              <i class="bi bi-eye me-2"></i>View Details
+            </a>
+          </div>
         </div>
       </div>
     </div>
     {% endfor %}
   </div>
 </div>
-<!-- In store/main.html, before </body> -->
+
+<!-- Custom CSS for styling -->
+<style>
+  .product-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+  }
+  .transition-all {
+    transition: all 0.3s ease;
+  }
+  .out-of-stock-overlay {
+    transition: opacity 0.3s ease;
+  }
+  .product-card:hover .out-of-stock-overlay {
+    opacity: 0.8;
+  }
+</style>
+
+<!-- Include jQuery for Add to Cart functionality -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 {% endblock content %}

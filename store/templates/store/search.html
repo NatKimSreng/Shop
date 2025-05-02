@@ -1,0 +1,196 @@
+{% extends 'store/main.html' %} {% block content %}
+
+<!-- Header with improved background gradient -->
+<header
+  class="py-5"
+  style="background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%)"
+>
+  <div class="container px-4 px-lg-5 my-5">
+    <div class="text-center text-white">
+      <h1
+        class="display-4 fw-bolder"
+        style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3)"
+      >
+        Discover Products
+      </h1>
+      <p class="lead fw-normal text-white-80 mb-0">
+        Find exactly what you're looking for with our smart search
+      </p>
+    </div>
+  </div>
+</header>
+
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <!-- Improved search card with shadow -->
+      <div class="card shadow-sm rounded-3 border-0 mb-5">
+        <div class="card-header bg-white border-0 pt-4 pb-2">
+          <h4 class="text-center fw-bold text-primary">Search Our Catalog</h4>
+        </div>
+      </div>
+
+      <!-- Results heading when search is performed -->
+      {% if searched %}
+      <div class="text-center mb-4">
+        <h3 class="fw-bold">Search Results</h3>
+        <p class="text-muted">Showing products matching your search</p>
+      </div>
+      {% endif %}
+
+      <!-- Product grid with improved cards -->
+      <div class="row g-4 mb-5">
+        {% if searched %} {% for product in searched %} {% if product.Is_sale %}
+        <!-- Sale product card with enhanced styling -->
+        <div class="col-md-6 col-lg-4">
+          <div
+            class="card h-100 shadow-sm border-0 rounded-3 product-card transition-all"
+          >
+            <!-- Improved sale badge -->
+            <div
+              class="badge bg-danger text-white position-absolute px-3 py-2 rounded-pill"
+              style="top: 1rem; right: 1rem; z-index: 1"
+            >
+              SALE
+            </div>
+
+            <!-- Product image with hover effect -->
+            <div class="overflow-hidden rounded-top">
+              <img
+                class="card-img-top product-img"
+                src="{{ product.image.url }}"
+                alt="{{ product.name }}"
+                style="
+                  object-fit: cover;
+                  height: 220px;
+                  transition: transform 0.3s ease;
+                "
+                onmouseover="this.style.transform='scale(1.05)'"
+                onmouseout="this.style.transform='scale(1)'"
+              />
+            </div>
+
+            <!-- Product details with improved spacing -->
+            <div class="card-body p-4">
+              <div class="text-center">
+                <!-- Product name -->
+                <h5 class="fw-bolder mb-3">{{ product.name }}</h5>
+
+                <!-- Sale indicator with stars -->
+                <div
+                  class="d-flex justify-content-center align-items-center small text-warning mb-3"
+                >
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill mx-1"></i>
+                  <span class="badge bg-warning text-dark mx-2 px-2 py-1"
+                    >Special Offer</span
+                  >
+                  <i class="bi bi-star-fill mx-1"></i>
+                  <i class="bi bi-star-fill"></i>
+                </div>
+
+                <!-- Product price with better formatting -->
+                <div class="mb-3">
+                  <span class="text-muted text-decoration-line-through me-2"
+                    >${{ product.price }}</span
+                  >
+                  <span class="fw-bold text-danger fs-5"
+                    >${{ product.Sale_price }}</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Product actions with improved button -->
+            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+              <div class="text-center">
+                <a
+                  class="btn btn-outline-primary rounded-pill px-4 py-2 mt-auto"
+                  href="{% url 'product' product.id %}"
+                >
+                  <i class="bi bi-eye me-2"></i>View Details
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% else %}
+        <!-- Regular product card with enhanced styling -->
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 shadow-sm border-0 rounded-3 product-card">
+            <!-- Product image with hover effect -->
+            <div class="overflow-hidden rounded-top">
+              <img
+                class="card-img-top product-img"
+                src="{{ product.image.url }}"
+                alt="{{ product.name }}"
+                style="
+                  object-fit: cover;
+                  height: 220px;
+                  transition: transform 0.3s ease;
+                "
+                onmouseover="this.style.transform='scale(1.05)'"
+                onmouseout="this.style.transform='scale(1)'"
+              />
+            </div>
+
+            <!-- Product details with improved spacing -->
+            <div class="card-body p-4">
+              <div class="text-center">
+                <!-- Product name -->
+                <h5 class="fw-bolder mb-3">{{ product.name }}</h5>
+
+                <!-- Product price with better formatting -->
+                <div class="mb-3">
+                  <span class="fw-bold fs-5">${{ product.price }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Product actions with improved button -->
+            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+              <div class="text-center">
+                <a
+                  class="btn btn-outline-dark rounded-pill px-4 py-2 mt-auto"
+                  href="{% url 'product' product.id %}"
+                >
+                  <i class="bi bi-eye me-2"></i>View Details
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %} {% endfor %} {% else %}
+        <!-- No results message (shown only when search is performed but no results found) -->
+        {% if request.method == 'POST' %}
+        <div class="col-12 text-center py-5">
+          <div class="py-5">
+            <i class="bi bi-search" style="font-size: 3rem; color: #ccc"></i>
+            <h3 class="mt-4">No Products Found</h3>
+            <p class="text-muted">
+              Try different keywords or browse our categories
+            </p>
+          </div>
+        </div>
+        {% endif %} {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add custom CSS for additional styling -->
+<style>
+  .product-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+  }
+  .transition-all {
+    transition: all 0.3s ease;
+  }
+</style>
+
+{% endblock %}
