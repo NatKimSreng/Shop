@@ -11,8 +11,8 @@ urlpatterns = [
 	path('login/', views.loginPage, name="login"),
 	path('logout/', views.logoutUser, name="logout"),
 	path('register/', views.registerPage, name="register"),
+ 	path('update_password/', views.update_password, name="update_password"),
 	path('update_user/', views.update_user, name="update_user"),
-	path('update_password/', views.update_password, name="update_password"),
 	path('product/<int:pk>/', views.product, name="product"),
 	path('category/<str:foo>/', views.category, name="category"),
 ]

@@ -109,17 +109,17 @@ def update_password(request):
            form = ChangePasswordForm(current_user, request.POST)
            if form.is_valid():
                form.save()
-               messages.success(request, 'Password updated')
+               messages.success(request, "Password updated successfully")
                login(request, current_user)
-               return redirect('store')
+               return redirect('update_user')
            else:
                for error in list (form.errors.values()):
                    messages.error(request, error)
+                   return redirect('update_password')
        else:
             form = ChangePasswordForm(current_user)
             return render(request, 'store/update_password.html', {'form': form})
     else:
-        messages.error(request, 'You need to be logged in to update your password')
-        return redirect('login')
+        messages.success(request, "You need to be logged in to update your password")
+        return redirect('store')
             
-    return render(request, 'store/update_password.html', context) 
