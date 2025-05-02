@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect 
 from .models import *  
+from .models import Product, Category, Profile
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -7,6 +8,21 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from .forms import SignUpForm, UpdateUserForm, ChangePasswordForm, UserInfoForm
 # Create your views here.
+
+def update_info(request):
+    if request.user.is_authenticated:
+        current_user = Profile.objects.get(user__id=request.user.id)
+        form = UserInfoForm(request.POST or None , instance=current_user)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'User updated')
+            return redirect('store')
+        return render(request, 'store/update_info.html',{'form': form})
+    else:
+        messages.error(request, 'You need to be logged in to update your profile')
+        return redirect('login')
+
 def update_user(request):
     if request.user.is_authenticated:
         current_user = User.objects.get(id=request.user.id)

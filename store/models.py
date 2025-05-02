@@ -6,6 +6,7 @@ from .models import *
 from django.db.models.signals import post_save
 
 
+
 class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	date_modified = models.DateTimeField(User, auto_now=True)
