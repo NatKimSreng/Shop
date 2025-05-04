@@ -26,6 +26,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.47059;
   letter-spacing: -0.022em;
+  overflow-x: hidden;
 }
 
 h1,
@@ -658,4 +659,24 @@ h6 {
     width: 100%;
     margin-bottom: 10px;
   }
+}
+
+.bi-facebook,
+.bi-instagram,
+.bi-twitter-x,
+.bi-linkedin {
+  font-size: 2rem;
+}
+.bi-facebook:hover {
+  color: #0d6efd;
+}
+.bi-instagram:hover {
+  color: #ff58cd;
+}
+.bi-twitter-x:hover {
+  color: #ffffff;
+}
+
+.list-unstyled li a:hover {
+  color: rgb(255, 222, 32) !important;
 }

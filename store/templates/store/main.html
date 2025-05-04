@@ -76,8 +76,8 @@
             >
               <a href="{% url 'home' %}" class="ms-md-2">
                 <img
-                  src="{% static 'images/logo.png' %}"
-                  height="35"
+                  src="{% static 'images/logo_2.jpg' %}"
+                  height="50"
                   alt="Ecom Logo"
                 />
               </a>
@@ -262,12 +262,12 @@
     {% block content %} {% endblock %}
 
     <!-- Footer -->
-    <footer class="bg-dark text-light py-5 mt-5" id="footer">
+    <footer class="bg-dark text-light py-5 mt-5">
       <div class="container">
         <div class="row">
           <!-- Company Info -->
           <div class="col-md-4 mb-4">
-            <h5 class="mb-3">OtDeng</h5>
+            <h5 class="mb-3">GetMe Phone Shop</h5>
             <p class="text-white">
               Premium quality products delivered to your doorstep. Shop with
               confidence with our secure payment and fast shipping.
@@ -360,16 +360,16 @@
         </div>
         <!-- Bottom Footer -->
         <div class="row mt-4 pt-4 border-top border-secondary">
-          <div class="col-md-6 text-center text-md-start">
+          <div class="col-md-8 text-center text-md-start">
             <p class="text-white">
-              © {% now "Y" %} OtDeng. All rights reserved.
+              © {% now "Y" %} GetMe Phone Shop. All rights reserved.
             </p>
           </div>
-          <div class="col-md-6 text-center text-md-end">
+          <div class="col-md-4 text-center text-md-end">
             <img
-              src="{% static 'images/payment-methods.png' %}"
+              src="{% static 'images/payment.webp' %}"
               alt="Payment Methods"
-              class="img-fluid"
+              class="img-fluid text-center"
               style="max-height: 30px"
             />
           </div>

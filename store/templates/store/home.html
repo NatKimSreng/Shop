@@ -159,76 +159,6 @@
   </div>
 </div>
 
-<div class="container-fluid mt-5 p-0 mb-5">
-  <div class="row g-3">
-    <!-- Left Section (Tall Image with Caption) -->
-    <div class="col-md-6 col-lg-4 m-0 p-0 position-relative">
-      <img
-        class="w-100 h-100 object-fit-cover"
-        src="{% static 'images/iphone16.jpg' %}"
-        alt="Phone Category"
-      />
-      <div
-        class="position-absolute text-overlay bottom-0 start-0 text-dark p-5 d-sm-block"
-      >
-        <h3 class="fw-bold">Explore iPhones</h3>
-        <p class="mb-3">Latest Models</p>
-        <a
-          id="btn"
-          href="#"
-          class="btn btn-outline-dark text-bg-white rounded-pill"
-          >Shop</a
-        >
-      </div>
-    </div>
-
-    <!-- Right Sections (Stacked) -->
-    <div class="col-md-6 col-lg-8 d-flex flex-column m-0 p-0 overflow-hidden">
-      <!-- Top Section (Welcome Banner) -->
-      <div class="row">
-        <div class="col-12 m-0 p-0 position-relative mb-3">
-          <img
-            class="w-100"
-            style="height: 50vh; object-fit: cover"
-            src="{% static 'images/iphone_por.jpg' %}"
-            alt="Welcome Banner"
-          />
-          <div
-            class="position-absolute text-overlay top-50 start-50 translate-middle text-center text-white p-5"
-          >
-            <!-- <h1 class="fw-bold">Welcome to OTDENG STORE</h1> -->
-            <p class="mb-3">Discover the Latest Smartphones</p>
-            <a id="btn" href="#" class="btn btn-outline-light rounded-pill"
-              >Shop</a
-            >
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottom Section (iPhone 16 Banner) -->
-      <div class="row">
-        <div class="col-12 m-0 p-0 position-relative">
-          <img
-            class="w-100"
-            style="height: 50vh; object-fit: cover"
-            src="{% static 'images/iphone_por.jpg' %}"
-            alt="iPhone 16 Banner"
-          />
-          <div
-            class="position-absolute text-overlay top-50 start-50 translate-middle text-center text-white p-5"
-          >
-            <h1 class="fw-bold">iPhone 16</h1>
-            <p class="mb-3">Discover the Latest Smartphones</p>
-            <a id="btn" href="#" class="btn btn-outline-light rounded-pill"
-              >Shop</a
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 {% comment %} new arrival {% endcomment %}
 <div id="newarrival" class="container-fluid my-5 p-5">
   <div style="font-family: Detroit" class="text-center text-uppercase">
@@ -343,4 +273,57 @@
     </div>
   </div>
 </div>
+
+<div class="container-fluid mb-5">
+  <div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 my-2">
+      <img
+        class="img-fluid h-100 w-100"
+        src="{% static 'images/samsung_4.jpg' %}"
+        alt="Samsung"
+      />
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 my-2">
+      <img
+        class="img-fluid w-100"
+        src="{% static 'images/rog_2.jpg' %}"
+        alt="ROG"
+      />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 my-2">
+      <img
+        class="img-fluid h-100 w-100"
+        src="{% static 'images/iphones.jpg' %}"
+        alt="iPhone"
+      />
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 my-2">
+      <img
+        class="img-fluid w-100"
+        src="{% static 'images/vivo_2.jpg' %}"
+        alt="Vivo"
+      />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12 my-2">
+      <img
+        class="img-fluid w-100"
+        src="{% static 'images/oppo_2.avif' %}"
+        alt="Oppo"
+      />
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12 my-2">
+      <img
+        class="img-fluid w-100"
+        src="{% static 'images/pixel_1.jpg' %}"
+        alt="Pixel"
+      />
+    </div>
+  </div>
+</div>
+
 {% endblock %}
