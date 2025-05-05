@@ -1,45 +1,239 @@
 {% extends 'store/main.html' %} {% load static %} {% block content %}
+
 <div
   id="carouselExampleAutoplaying"
-  class="carousel slide"
+  class="carousel slide carousel-fade"
+  {#
+  Added
+  carousel-fade
+  for
+  smoother
+  transition
+  #}
   data-bs-ride="carousel"
+  data-bs-interval="5000"
+  {#
+  Adjust
+  interval
+  as
+  needed
+  #}
 >
   <div class="carousel-inner">
     <div class="carousel-item active">
-      <img
-        src="{%static 'images/vivo.jpg' %}"
-        class="d-block w-100"
-        alt="vivo_slide"
-      />
-      <div class="carousel-caption d-none d-md-block"></div>
+      <div class="position-relative">
+        <img
+          src="{% static 'images/vivo.jpg' %}"
+          class="d-block w-100 carousel-img"
+          {#
+          Added
+          carousel-img
+          class
+          #}
+          alt="Vivo Slide"
+        />
+        <div
+          class="carousel-caption d-block text-white animate__animated animate__fadeInUp"
+        >
+          {# Added parent animation #}
+          <h3 class="animate__animated animate__fadeInDown animate__delay-1s">
+            {# Adjusted delay #} Vivo: Redefine Your Mobile Experience
+          </h3>
+          <p class="animate__animated animate__fadeInUp animate__delay-2s">
+            {# Adjusted delay #} Discover Vivo's innovative cameras, vibrant
+            displays, and powerful performance tailored for modern lifestyles.
+            Elevate your photography and mobile experience with Vivo's
+            cutting-edge technology.
+          </p>
+          <a
+            href="{% url 'category' 'Vivo' %}"
+            class="btn btn-light rounded-pill mt-3 animate__animated animate__zoomIn animate__delay-3s"
+            {#
+            Changed
+            button
+            style
+            and
+            animation
+            #}
+          >
+            Explore Vivo Collection <i class="bi bi-arrow-right"></i> {# Added
+            icon #}
+          </a>
+        </div>
+        <div class="overlay-gradient"></div>
+        {# Added gradient overlay #}
+      </div>
     </div>
     <div class="carousel-item">
-      <img
-        src="https://images.samsung.com/is/image/samsung/assets/ie/2501/pfs/01-hd01-P3-KV-pc-1440x640_LTR_v1.jpg?imwidth=2560"
-        class="d-block w-100"
-        alt="samsung_slide"
-      />
+      <div class="position-relative">
+        <img
+          src="https://images.samsung.com/is/image/samsung/assets/ie/2501/pfs/01-hd01-P3-KV-pc-1440x640_LTR_v1.jpg?imwidth=2560"
+          class="d-block w-100 carousel-img"
+          {#
+          Added
+          carousel-img
+          class
+          #}
+          alt="Samsung Slide"
+        />
+        <div
+          class="carousel-caption d-block text-white animate__animated animate__fadeInUp"
+        >
+          {# Added parent animation #}
+          <h3 class="animate__animated animate__fadeInDown animate__delay-1s">
+            {# Adjusted delay #} Samsung Galaxy: Innovate Your Future
+          </h3>
+          <p class="animate__animated animate__fadeInUp animate__delay-2s">
+            {# Adjusted delay #} Experience Samsung's stunning AMOLED displays,
+            versatile S Pen, and robust performance for work and play. From
+            flagships to foldables, Samsung pushes the boundaries of mobile
+            technology.
+          </p>
+          <a
+            href="{% url 'category' 'Samsung' %}"
+            class="btn btn-light rounded-pill mt-3 animate__animated animate__zoomIn animate__delay-3s"
+            {#
+            Changed
+            button
+            style
+            and
+            animation
+            #}
+          >
+            Discover Samsung Galaxy <i class="bi bi-arrow-right"></i> {# Added
+            icon #}
+          </a>
+        </div>
+        <div class="overlay-gradient"></div>
+        {# Added gradient overlay #}
+      </div>
     </div>
     <div class="carousel-item">
-      <img
-        src="{%static 'images/pixel_slide.avif' %}"
-        class="d-block w-100"
-        alt="pixel_slide"
-      />
+      <div class="position-relative">
+        <img
+          src="{% static 'images/pixel_slide.avif' %}"
+          class="d-block w-100 carousel-img"
+          {#
+          Added
+          carousel-img
+          class
+          #}
+          alt="Pixel Slide"
+        />
+        <div
+          class="carousel-caption d-block text-white animate__animated animate__fadeInUp"
+        >
+          {# Added parent animation #}
+          <h3 class="animate__animated animate__fadeInDown animate__delay-1s">
+            {# Adjusted delay #} Google Pixel: Capture Every Moment
+          </h3>
+          <p class="animate__animated animate__fadeInUp animate__delay-2s">
+            {# Adjusted delay #} Powered by Google's AI, Pixel offers unmatched
+            photography, seamless Android integration, and smart features. Get
+            the best of Google in the palm of your hand.
+          </p>
+          <a
+            href="{% url 'category' 'Pixel' %}"
+            class="btn btn-light rounded-pill mt-3 animate__animated animate__zoomIn animate__delay-3s"
+            {#
+            Changed
+            button
+            style
+            and
+            animation
+            #}
+          >
+            Shop Pixel Now <i class="bi bi-arrow-right"></i> {# Added icon #}
+          </a>
+        </div>
+        <div class="overlay-gradient"></div>
+        {# Added gradient overlay #}
+      </div>
     </div>
     <div class="carousel-item">
-      <img
-        src="{%static 'images/oppo_slide.webp' %}"
-        class="d-block w-100"
-        alt="oppo_slide"
-      />
+      <div class="position-relative">
+        <img
+          src="{% static 'images/oppo_slide.webp' %}"
+          class="d-block w-100 carousel-img"
+          {#
+          Added
+          carousel-img
+          class
+          #}
+          alt="OPPO Slide"
+        />
+        <div
+          class="carousel-caption d-block text-white animate__animated animate__fadeInUp"
+        >
+          {# Added parent animation #}
+          <h3 class="animate__animated animate__fadeInDown animate__delay-1s">
+            {# Adjusted delay #} OPPO: Elegance in Every Detail
+          </h3>
+          <p class="animate__animated animate__fadeInUp animate__delay-2s">
+            {# Adjusted delay #} OPPO's innovative foldable designs, super fast
+            charging, and vibrant displays redefine smartphone sophistication.
+            Experience art and technology combined.
+          </p>
+          <a
+            href="{% url 'category' 'Oppo' %}"
+            class="btn btn-light rounded-pill mt-3 animate__animated animate__zoomIn animate__delay-3s"
+            {#
+            Changed
+            button
+            style
+            and
+            animation
+            #}
+          >
+            Explore OPPO Devices <i class="bi bi-arrow-right"></i> {# Added icon
+            #}
+          </a>
+        </div>
+        <div class="overlay-gradient"></div>
+        {# Added gradient overlay #}
+      </div>
     </div>
     <div class="carousel-item">
-      <img
-        src="{%static 'images/rog_slide.jpg' %}"
-        class="d-block w-100"
-        alt="rog_slide"
-      />
+      <div class="position-relative">
+        <img
+          src="{% static 'images/rog_slide.jpg' %}"
+          class="d-block w-100 carousel-img"
+          {#
+          Added
+          carousel-img
+          class
+          #}
+          alt="ROG Slide"
+        />
+        <div
+          class="carousel-caption d-block text-white animate__animated animate__fadeInUp"
+        >
+          {# Added parent animation #}
+          <h3 class="animate__animated animate__fadeInDown animate__delay-1s">
+            {# Adjusted delay #} ROG: Unleash Gaming Dominance
+          </h3>
+          <p class="animate__animated animate__fadeInUp animate__delay-2s">
+            {# Adjusted delay #} ASUS ROG phones deliver high-refresh displays,
+            extreme cooling, and raw power for gamers. Dominate the mobile
+            gaming arena with ROG's performance and features.
+          </p>
+          <a
+            href="{% url 'category' 'Rog' %}"
+            class="btn btn-light rounded-pill mt-3 animate__animated animate__zoomIn animate__delay-3s"
+            {#
+            Changed
+            button
+            style
+            and
+            animation
+            #}
+          >
+            Shop ROG Gaming <i class="bi bi-arrow-right"></i> {# Added icon #}
+          </a>
+        </div>
+        <div class="overlay-gradient"></div>
+        {# Added gradient overlay #}
+      </div>
     </div>
   </div>
   <button
@@ -62,268 +256,861 @@
   </button>
 </div>
 
-<div class="container mt-5">
-  <div class="row">
-    <div style="font-family: Detroit" class="text-center">
-      <h1 class="text-uppercase text-dark">Welcome to Otdeng Store</h1>
-      <p class="fs-5">
-        Discover the ultimate destination for all your smartphone needs at
-        OTDENG STORE, your premier e-commerce platform for cutting-edge mobile
-        devices! We’re thrilled to bring you a curated selection of the latest
-        phones from top brands, packed with innovative features to keep you
-        connected, productive, and entertained. Whether you’re hunting for a
-        sleek flagship model, a budget-friendly gem, or the perfect accessories
-        to complement your device, OTDENG STORE has it all. Enjoy seamless
-        shopping with competitive prices, fast shipping, and exceptional
-        customer support. Dive into the future of mobile technology
-        today—welcome to the OTDENG family, where your perfect phone awaits!
+<section
+  class="py-5 bg-light text-center animate__animated animate__fadeIn"
+  id="welcome"
+>
+  {# Added section tag, padding, background, and animation #}
+  <div class="container">
+    <div
+      style="
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+          sans-serif;
+      "
+    >
+      {# Kept font style #}
+      <h1
+        class="section-title text-uppercase text-dark mb-4 animate__animated animate__fadeInDown"
+      >
+        {# Added margin #} Welcome to OTDENG Store
+      </h1>
+      <p
+        class="section-subtitle lead mb-4 animate__animated animate__fadeInUp animate__delay-1s"
+      >
+        {# Added lead class and margin #} Your ultimate destination for the
+        latest and greatest in smartphone technology.
       </p>
+      <p class="animate__animated animate__fadeInUp animate__delay-1-5s">
+        {# Adjusted delay #} At OTDENG Store, we’re passionate about connecting
+        you with the world’s most advanced smartphones. Our curated collection
+        features top brands like Apple, Samsung, Google, OPPO, Vivo, and ASUS
+        ROG, offering everything from flagship devices with AI-driven features
+        to gaming phones with unparalleled performance.
+      </p>
+      <p class="animate__animated animate__fadeInUp animate__delay-2s">
+        {# Added new paragraph with animation #} We pride ourselves on
+        competitive pricing, lightning-fast shipping, and secure payment
+        options, including major credit cards, PayPal, and other digital
+        wallets, ensuring a smooth and safe transaction every time.
+      </p>
+      <p class="animate__animated animate__fadeInUp animate__delay-2-5s">
+        {# Added new paragraph with animation #} Our dedicated customer support
+        team is always here to assist with product inquiries, order tracking,
+        and after-sales service, providing you with a hassle-free shopping
+        experience. Plus, enjoy exclusive deals, seasonal promotions, and a
+        straightforward return policy.
+      </p>
+      <p class="animate__animated animate__fadeInUp animate__delay-3s">
+        {# Added new paragraph with animation #} Shop with confidence at OTDENG
+        Store—your gateway to the future of mobile technology!
+      </p>
+      <a
+        href="#categories"
+        class="btn btn-primary rounded-pill mt-4 animate__animated animate__zoomIn animate__delay-3-5s"
+      >
+        {# Added link and animation #} Start Exploring
+        <i class="bi bi-chevron-down"></i> {# Added icon #}
+      </a>
     </div>
   </div>
-</div>
-<div class="container-fluid mt-5 p-0">
-  <div class="row">
-    <div class="col-md-6 col-sm-12 m-0 p-0 position-relative">
-      <img
-        class="w-100 h-100"
-        src="{%static 'images/samsung_4.jpg' %}"
-        alt=""
-      />
-      <div
-        class="position-absolute text-overlay bottom-0 start-0 p-5 text-white d-none d-sm-block"
-      >
-        <h3 class="fw-bold">Samsung</h3>
-        <p class="mb-3">Sigma</p>
-        <a id="btn" href="#" class="btn btn-outline-light rounded-pill">Shop</a>
-      </div>
-    </div>
-    <div class="col-md-6 col-sm-12 m-0 p-0 position-relative">
-      <img class="w-100 h-100" src="{%static 'images/rog_2.jpg' %}" alt="" />
-      <div
-        class="position-absolute text-overlay bottom-0 start-0 text-white p-5 d-none d-sm-block"
-        style="bottom: 50px; left: 50px"
-      >
-        <h3 class="fw-bold">ROG Gaming Phones</h3>
-        <p class="mb-3">Sigma</p>
-        <a id="btn" href="#" class="btn btn-outline-light rounded-pill">Shop</a>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6 col-sm-12 m-0 p-0 order-md-2 position-relative">
-      <img class="w-100 h-100" src="{% static 'images/iphones.jpg' %}" alt="" />
-      <div
-        class="position-absolute text-overlay bottom-0 start-0 text-white p-5 d-none d-sm-block"
-        style="bottom: 50px; left: 50px"
-      >
-        <h3 class="fw-bold">Iphones</h3>
-        <p class="mb-3">Sigma</p>
-        <a id="btn" href="#" class="btn btn-outline-light rounded-pill">Shop</a>
-      </div>
-    </div>
-    <div class="col-md-6 col-sm-12 m-0 p-0 order-md-1 position-relative">
-      <img class="w-100 h-100" src="{%static 'images/pixel_1.jpg' %}" alt="" />
-      <div
-        class="position-absolute text-overlay bottom-0 start-0 text-white p-5 d-none d-sm-block"
-        style="bottom: 50px; left: 50px"
-      >
-        <h3 class="fw-bold">Google Pixel</h3>
-        <p class="mb-3">Sigma</p>
-        <a id="btn" href="#" class="btn btn-outline-light rounded-pill">Shop</a>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6 col-sm-12 m-0 p-0 order-md-2 position-relative">
-      <img class="w-100 h-100" src="{% static 'images/vivo_2.jpg' %}" alt="" />
-      <div
-        class="position-absolute text-overlay bottom-0 start-0 text-white p-5 d-none d-sm-block"
-        style="bottom: 50px; left: 50px"
-      >
-        <h3 class="fw-bold">Vivo</h3>
-        <p class="mb-3">Sigma</p>
-        <a id="btn" href="#" class="btn btn-outline-light rounded-pill">Shop</a>
-      </div>
-    </div>
-    <div class="col-md-6 col-sm-12 m-0 p-0 order-md-1 position-relative">
-      <img class="w-100 h-100" src="{%static 'images/oppo_2.avif' %}" alt="" />
-      <div
-        class="position-absolute text-overlay bottom-0 start-0 text-white p-5 d-none d-sm-block"
-        style="bottom: 50px; left: 50px"
-      >
-        <h3 class="fw-bold">Oppo Flip</h3>
-        <p class="mb-3">Sigma</p>
-        <a id="btn" href="#" class="btn btn-outline-light rounded-pill">Shop</a>
-      </div>
-    </div>
-  </div>
-</div>
+</section>
 
-{% comment %} new arrival {% endcomment %}
-<div id="newarrival" class="container-fluid my-5 p-5">
-  <div style="font-family: Detroit" class="text-center text-uppercase">
-    <h1 class="text-secondary">New Arrivals</h1>
-    <p style="text-align: center, width: 100px">
-      Discover the latest arrivals at OTDENG STORE – bold styles, premium
-      quality, and unbeatable vibes. Shop now and elevate your wardrobe with the
-      newest trends!
+<section class="py-5" id="categories">
+  {# Added section tag and padding #}
+  <div class="container">
+    <h2
+      class="section-title text-center mb-4 animate__animated animate__fadeIn"
+    >
+      {# Added text-center and margin #} Shop by Category
+    </h2>
+    <p
+      class="section-subtitle text-center mb-5 animate__animated animate__fadeIn animate__delay-1s"
+    >
+      {# Added text-center and margin #} Browse our premium selection of
+      smartphones, each designed to elevate your digital experience. Find the
+      perfect device for your needs.
     </p>
+    <div class="row g-4">
+      <div class="col-md-4 col-sm-6 animate__animated animate__fadeInUp">
+        {# Added animation #}
+        <div class="card product-card h-100 shadow-sm">
+          <img
+            src="{% static 'images/iphones.jpg' %}"
+            class="card-img-top product-img"
+            alt="iPhone"
+          />
+          <div class="card-body text-center">
+            <h5 class="card-title mb-3">iPhone</h5>
+            {# Added margin #}
+            <p class="card-text text-muted mb-4">
+              {# Added text-muted and margin #} Apple’s iPhone lineup combines
+              premium titanium designs, powerful A-series chips, and pro-grade
+              cameras with iOS’s seamless ecosystem for an unmatched user
+              experience.
+            </p>
+            <a
+              href="{% url 'category' 'Iphone' %}"
+              class="btn btn-outline-primary rounded-pill"
+              >Shop iPhone <i class="bi bi-arrow-right"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-md-4 col-sm-6 animate__animated animate__fadeInUp animate__delay-1s"
+      >
+        {# Added animation and delay #}
+        <div class="card product-card h-100 shadow-sm">
+          <img
+            src="{% static 'images/samsung_4.jpg' %}"
+            class="card-img-top product-img"
+            alt="Samsung"
+          />
+          <div class="card-body text-center">
+            <h5 class="card-title mb-3">Samsung</h5>
+            {# Added margin #}
+            <p class="card-text text-muted mb-4">
+              {# Added text-muted and margin #} Samsung Galaxy devices offer
+              vibrant AMOLED displays, versatile S Pen functionality, and robust
+              performance for creators and professionals. Explore the future
+              with Galaxy innovation.
+            </p>
+            <a
+              href="{% url 'category' 'Samsung' %}"
+              class="btn btn-outline-primary rounded-pill"
+              >Shop Samsung <i class="bi bi-arrow-right"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-md-4 col-sm-6 animate__animated animate__fadeInUp animate__delay-2s"
+      >
+        {# Added animation and delay #}
+        <div class="card product-card h-100 shadow-sm">
+          <img
+            src="{% static 'images/pixel_1.jpg' %}"
+            class="card-img-top product-img"
+            alt="Pixel"
+          />
+          <div class="card-body text-center">
+            <h5 class="card-title mb-3">Google Pixel</h5>
+            {# Added margin #}
+            <p class="card-text text-muted mb-4">
+              {# Added text-muted and margin #} Google Pixel phones deliver
+              AI-enhanced photography, a pure Android experience, and smart
+              features powered by Tensor chips. Capture stunning photos and
+              enjoy seamless integration.
+            </p>
+            <a
+              href="{% url 'category' 'Pixel' %}"
+              class="btn btn-outline-primary rounded-pill"
+              >Shop Pixel <i class="bi bi-arrow-right"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-md-4 col-sm-6 animate__animated animate__fadeInUp animate__delay-2-5s"
+      >
+        {# Added animation and delay #}
+        <div class="card product-card h-100 shadow-sm">
+          <img
+            src="{% static 'images/oppo_2.avif' %}"
+            class="card-img-top product-img"
+            alt="Oppo"
+          />
+          <div class="card-body text-center">
+            <h5 class="card-title mb-3">OPPO</h5>
+            {# Added margin #}
+            <p class="card-text text-muted mb-4">
+              {# Added text-muted and margin #} OPPO’s sleek designs, innovative
+              foldable phones, rapid charging, and vibrant AMOLED displays bring
+              style and innovation to every interaction.
+            </p>
+            <a
+              href="{% url 'category' 'Oppo' %}"
+              class="btn btn-outline-primary rounded-pill"
+              >Shop OPPO <i class="bi bi-arrow-right"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-md-4 col-sm-6 animate__animated animate__fadeInUp animate__delay-3s"
+      >
+        {# Added animation and delay #}
+        <div class="card product-card h-100 shadow-sm">
+          <img
+            src="{% static 'images/vivo_2.jpg' %}"
+            class="card-img-top product-img"
+            alt="Vivo"
+          />
+          <div class="card-body text-center">
+            <h5 class="card-title mb-3">Vivo</h5>
+            {# Added margin #}
+            <p class="card-text text-muted mb-4">
+              {# Added text-muted and margin #} Vivo’s cutting-edge cameras,
+              stylish designs, and high-performance chipsets make every moment
+              extraordinary. Experience professional photography and fluid
+              performance.
+            </p>
+            <a
+              href="{% url 'category' 'Vivo' %}"
+              class="btn btn-outline-primary rounded-pill"
+              >Shop Vivo <i class="bi bi-arrow-right"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-md-4 col-sm-6 animate__animated animate__fadeInUp animate__delay-3-5s"
+      >
+        {# Added animation and delay #}
+        <div class="card product-card h-100 shadow-sm">
+          <img
+            src="{% static 'images/rog_2.jpg' %}"
+            class="card-img-top product-img"
+            alt="ROG"
+          />
+          <div class="card-body text-center">
+            <h5 class="card-title mb-3">ROG Gaming</h5>
+            {# Added margin #}
+            <p class="card-text text-muted mb-4">
+              {# Added text-muted and margin #} ASUS ROG phones feature
+              ultra-smooth 165Hz displays, advanced cooling systems, and
+              powerful Snapdragon processors for unmatched mobile gaming
+              performance.
+            </p>
+            <a
+              href="{% url 'category' 'Rog' %}"
+              class="btn btn-outline-primary rounded-pill"
+              >Shop ROG <i class="bi bi-arrow-right"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="row row-cols-1 row-cols-md-3 g-4">
-    <div class="col">
-      <div class="card h-100 shadow">
-        <img
-          src="{% static 'images/iphones.jpg' %}"
-          class="card-img-top"
-          alt="iphone"
-        />
-        <div id="color" class="card-body p-4">
-          <h5 class="card-title">Iphone 16 Titanium</h5>
-          <p class="card-text">
-            Experience brilliance with the iPhone 16! Stunning display, A18
-            chip, and cutting-edge camera tech await.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card w-100 h-100 shadow">
-        <img
-          src="{% static 'images/pixel_1.jpg' %}"
-          class="card-img-top"
-          alt="pixel"
-        />
-        <div id="color" class="card-body p-4">
-          <h5 class="card-title">Google Pixel 9 Pro XL</h5>
-          <p class="card-text">
-            Meet the Google Pixel 9 Pro XL – epic AI features, pro-level
-            photography, and seamless performance.
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card w-100 h-100 shadow">
-        <img
-          style="object-fit: cover"
-          src="{% static 'images/oppo_1.jpg' %}"
-          class="card-img-top"
-          alt="oppo"
-        />
-        <div id="color" class="card-body p-4">
-          <h5 class="card-title">Oppo Reno13 Series</h5>
-          <p class="card-text">
-            Discover the OPPO Reno13 Series! Sleek design, AI-powered
-            photography, and a vibrant 120Hz display.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
+</section>
 
-  <div class="row row-cols-1 row-cols-md-3 g-4 mt-5">
-    <div class="col">
-      <div class="card h-100 shadow">
-        <img
-          src="{% static 'images/samsung_2.jpg' %}"
-          class="card-img-top"
-          alt="samsung"
-        />
-        <div id="color" class="card-body p-4">
-          <h5 class="card-title">Samsung S24 Ultra</h5>
-          <p class="card-text">
-            Unleash power with the Samsung S24 Ultra! Massive AMOLED display, S
-            Pen precision, and top-tier cameras.
-          </p>
+<section id="newarrival" class="py-5">
+  {# Added section tag, id, and padding #}
+  <div class="container">
+    <h2
+      class="section-title text-center mb-4 animate__animated animate__fadeIn"
+    >
+      New Arrivals
+    </h2>
+    {# Added text-center and margin #}
+    <p
+      class="section-subtitle text-center mb-5 animate__animated animate__fadeIn animate__delay-1s"
+    >
+      {# Added text-center and margin #} Stay ahead with the latest smartphones
+      featuring groundbreaking technology and sleek designs, just added to our
+      inventory.
+    </p>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+      <div class="col animate__animated animate__slideInUp">
+        {# Added animation #}
+        <div class="card h-100 shadow product-item-card">
+          {# Added custom class #}
+          <img
+            src="{% static 'images/iphones.jpg' %}"
+            class="card-img-top product-img-sm"
+            {#
+            Added
+            custom
+            class
+            #}
+            alt="iPhone"
+          />
+          <div class="card-body p-4 text-center">
+            <h5 class="card-title">iPhone 16 Pro</h5>
+            <p class="card-text text-muted">
+              {# Added text-muted #} Powered by the cutting-edge A18 Pro chip,
+              featuring a revolutionary 48MP Fusion camera, 6.3-inch ProMotion
+              display, and durable titanium construction.
+            </p>
+            <a
+              href="{% url 'category' 'Iphone' %}"
+              class="btn btn-outline-primary rounded-pill"
+              >Shop Now <i class="bi bi-bag"></i
+            ></a>
+            {# Added icon #}
+          </div>
         </div>
       </div>
-    </div>
-    <div class="col">
-      <div class="card w-100 h-100 shadow">
-        <img
-          src="{% static 'images/vivo_1.jpg' %}"
-          class="card-img-top"
-          alt="vivo"
-        />
-        <div id="color" class="card-body p-4">
-          <h5 class="card-title">Vivo V50</h5>
-          <p class="card-text">
-            Elevate your style with the Vivo V50! Crystal-clear visuals,
-            blazing-fast performance, and pro-grade cameras.
-          </p>
+      <div class="col animate__animated animate__slideInUp animate__delay-1s">
+        {# Added animation and delay #}
+        <div class="card h-100 shadow product-item-card">
+          {# Added custom class #}
+          <img
+            src="{% static 'images/pixel_1.jpg' %}"
+            class="card-img-top product-img-sm"
+            {#
+            Added
+            custom
+            class
+            #}
+            alt="Pixel"
+          />
+          <div class="card-body p-4 text-center">
+            <h5 class="card-title">Google Pixel 9 Pro XL</h5>
+            <p class="card-text text-muted">
+              {# Added text-muted #} Equipped with the next-gen Tensor G4, a
+              triple-lens camera system for stunning photos, 6.8-inch OLED
+              display, and AI features like real-time translation.
+            </p>
+            <a
+              href="{% url 'category' 'Pixel' %}"
+              class="btn btn-outline-primary rounded-pill"
+              >Shop Now <i class="bi bi-bag"></i
+            ></a>
+            {# Added icon #}
+          </div>
         </div>
       </div>
-    </div>
-    <div class="col">
-      <div class="card w-100 h-100 shadow">
-        <img
-          style="object-fit: cover"
-          src="{% static 'images/rog_3.jpg' %}"
-          class="card-img-top"
-          alt="rog"
-        />
-        <div id="color" class="card-body p-4">
-          <h5 class="card-title">Asus ROG 8 Pro</h5>
-          <p class="card-text">
-            Game on with the ASUS ROG 8 Pro! Unrivaled power, 185Hz display, and
-            epic cooling tech.
-          </p>
+      <div class="col animate__animated animate__slideInUp animate__delay-2s">
+        {# Added animation and delay #}
+        <div class="card h-100 shadow product-item-card">
+          {# Added custom class #}
+          <img
+            src="{% static 'images/oppo_1.jpg' %}"
+            class="card-img-top product-img-sm"
+            {#
+            Added
+            custom
+            class
+            #}
+            alt="OPPO"
+          />
+          <div class="card-body p-4 text-center">
+            <h5 class="card-title">OPPO Reno13 Pro</h5>
+            <p class="card-text text-muted">
+              {# Added text-muted #} Features a vibrant 6.7-inch 120Hz AMOLED
+              display, a powerful 50MP AI camera, 80W fast charging, and a
+              sleek, eye-catching design.
+            </p>
+            <a
+              href="{% url 'category' 'Oppo' %}"
+              class="btn btn-outline-primary rounded-pill"
+              >Shop Now <i class="bi bi-bag"></i
+            ></a>
+            {# Added icon #}
+          </div>
+        </div>
+      </div>
+      <div class="col animate__animated animate__slideInUp animate__delay-2-5s">
+        {# Added animation and delay #}
+        <div class="card h-100 shadow product-item-card">
+          {# Added custom class #}
+          <img
+            src="{% static 'images/samsung_2.jpg' %}"
+            class="card-img-top product-img-sm"
+            {#
+            Added
+            custom
+            class
+            #}
+            alt="Samsung"
+          />
+          <div class="card-body p-4 text-center">
+            <h5 class="card-title">Samsung Galaxy S25 Ultra</h5>
+            <p class="card-text text-muted">
+              {# Added text-muted #} Boasts an immersive 6.9-inch Dynamic AMOLED
+              2X display, groundbreaking 200MP camera, integrated S Pen support,
+              and Snapdragon 8 Gen 4 power.
+            </p>
+            <a
+              href="{% url 'category' 'Samsung' %}"
+              class="btn btn-outline-primary rounded-pill"
+              >Shop Now <i class="bi bi-bag"></i
+            ></a>
+            {# Added icon #}
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<div class="container-fluid mb-5">
-  <div class="row">
-    <div class="col-lg-6 col-md-6 col-sm-12 my-2">
-      <img
-        class="img-fluid h-100 w-100"
-        src="{% static 'images/samsung_4.jpg' %}"
-        alt="Samsung"
-      />
-    </div>
-    <div class="col-lg-6 col-md-6 col-sm-12 my-2">
-      <img
-        class="img-fluid w-100"
-        src="{% static 'images/rog_2.jpg' %}"
-        alt="ROG"
-      />
+<section class="py-5 bg-light" id="reviews">
+  {# Added section tag, id, padding, and background #}
+  <div class="container">
+    <h2
+      class="section-title text-center mb-4 animate__animated animate__fadeIn"
+    >
+      {# Added text-center and margin #} What Our Customers Say
+    </h2>
+    <p
+      class="section-subtitle text-center mb-5 animate__animated animate__fadeIn animate__delay-1s"
+    >
+      {# Added text-center and margin #} Hear from our satisfied customers about
+      their OTDENG Store experience. Your trust is our greatest reward.
+    </p>
+    <div class="row g-4 justify-content-center">
+      {# Added justify-content-center #}
+      <div class="col-md-4 col-sm-6 animate__animated animate__fadeInUp">
+        {# Added animation #}
+        <div class="card h-100 shadow-sm text-center review-card">
+          {# Added custom class #}
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-center mb-3 star-rating">
+              {# Added star-rating class #}
+              <i class="bi bi-star-fill text-warning"></i>
+              <i class="bi bi-star-fill text-warning mx-1"></i>
+              <i class="bi bi-star-fill text-warning"></i>
+              <i class="bi bi-star-fill text-warning mx-1"></i>
+              <i class="bi bi-star-fill text-warning"></i>
+            </div>
+            <p class="card-text review-text mb-4">
+              {# Added custom class and margin #} "I ordered the iPhone 16 Pro,
+              and it arrived in just two days! The packaging was secure, and the
+              phone is flawless. OTDENG’s customer service was super helpful
+              with my questions. Highly recommend!"
+            </p>
+            <h6 class="card-title mt-3 review-author">Sarah M.</h6>
+            {# Added custom class #}
+            <small class="text-muted">Verified Buyer</small>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-md-4 col-sm-6 animate__animated animate__fadeInUp animate__delay-1s"
+      >
+        {# Added animation and delay #}
+        <div class="card h-100 shadow-sm text-center review-card">
+          {# Added custom class #}
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-center mb-3 star-rating">
+              {# Added star-rating class #}
+              <i class="bi bi-star-fill text-warning"></i>
+              <i class="bi bi-star-fill text-warning mx-1"></i>
+              <i class="bi bi-star-fill text-warning"></i>
+              <i class="bi bi-star-fill text-warning mx-1"></i>
+              <i class="bi bi-star-half text-warning"></i>
+            </div>
+            <p class="card-text review-text mb-4">
+              {# Added custom class and margin #} "The Samsung Galaxy S25 Ultra
+              is a game-changer! OTDENG Store had the best price, and the
+              checkout process was seamless. Shipping was fast too. Will
+              definitely shop here again!"
+            </p>
+            <h6 class="card-title mt-3 review-author">James T.</h6>
+            {# Added custom class #}
+            <small class="text-muted">Verified Buyer</small>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-md-4 col-sm-6 animate__animated animate__fadeInUp animate__delay-2s"
+      >
+        {# Added animation and delay #}
+        <div class="card h-100 shadow-sm text-center review-card">
+          {# Added custom class #}
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-center mb-3 star-rating">
+              {# Added star-rating class #}
+              <i class="bi bi-star-fill text-warning"></i>
+              <i class="bi bi-star-fill text-warning mx-1"></i>
+              <i class="bi bi-star-fill text-warning"></i>
+              <i class="bi bi-star-fill text-warning mx-1"></i>
+              <i class="bi bi-star-fill text-warning"></i>
+            </div>
+            <p class="card-text review-text mb-4">
+              {# Added custom class and margin #} "I got the OPPO Reno13 Pro,
+              and it’s stunning! The delivery was fast, and the customer support
+              team answered all my queries promptly and professionally. OTDENG
+              is my go-to for tech!"
+            </p>
+            <h6 class="card-title mt-3 review-author">Priya K.</h6>
+            {# Added custom class #}
+            <small class="text-muted">Verified Buyer</small>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+</section>
 
-  <div class="row">
-    <div class="col-lg-6 col-md-6 col-sm-12 my-2">
-      <img
-        class="img-fluid h-100 w-100"
-        src="{% static 'images/iphones.jpg' %}"
-        alt="iPhone"
-      />
-    </div>
-    <div class="col-lg-6 col-md-6 col-sm-12 my-2">
-      <img
-        class="img-fluid w-100"
-        src="{% static 'images/vivo_2.jpg' %}"
-        alt="Vivo"
-      />
+<section class="py-5" id="benefits">
+  {# Added section tag, id, and padding #}
+  <div class="container">
+    <h2
+      class="section-title text-center mb-4 animate__animated animate__fadeIn"
+    >
+      {# Added text-center and margin #} Why Shop With OTDENG Store?
+    </h2>
+    <p
+      class="section-subtitle text-center mb-5 animate__animated animate__fadeIn animate__delay-1s"
+    >
+      {# Added text-center and margin #} Discover the benefits of choosing
+      OTDENG Store for your smartphone needs. We are committed to providing the
+      best online shopping experience.
+    </p>
+    <div class="row g-4 justify-content-center">
+      {# Added justify-content-center #}
+      <div class="col-md-4 col-sm-6 animate__animated animate__fadeInUp">
+        {# Added animation #}
+        <div class="card h-100 shadow-sm text-center benefit-card">
+          {# Added custom class #}
+          <div class="card-body p-4">
+            <i
+              class="bi bi-truck fs-1 text-primary mb-3 animate__animated animate__pulse animate__infinite"
+            ></i>
+            {# Changed icon size, color, and added pulsing animation #}
+            <h5 class="card-title">Fast & Free Shipping</h5>
+            <p class="card-text text-muted">
+              {# Added text-muted #} Enjoy free, expedited shipping on all
+              orders across the country. Get real-time tracking and reliable
+              delivery straight to your doorstep.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-md-4 col-sm-6 animate__animated animate__fadeInUp animate__delay-1s"
+      >
+        {# Added animation and delay #}
+        <div class="card h-100 shadow-sm text-center benefit-card">
+          {# Added custom class #}
+          <div class="card-body p-4">
+            <i
+              class="bi bi-shield-lock fs-1 text-primary mb-3 animate__animated animate__pulse animate__infinite animate__delay-1s"
+            ></i>
+            {# Changed icon size, color, added pulsing animation and delay #}
+            <h5 class="card-title">Secure Payments</h5>
+            {# Changed icon #}
+            <p class="card-text text-muted">
+              {# Added text-muted #} Shop with confidence using our secure
+              payment gateways. We support major credit cards, PayPal, and
+              various digital wallets for your convenience.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div
+        class="col-md-4 col-sm-6 animate__animated animate__fadeInUp animate__delay-2s"
+      >
+        {# Added animation and delay #}
+        <div class="card h-100 shadow-sm text-center benefit-card">
+          {# Added custom class #}
+          <div class="card-body p-4">
+            <i
+              class="bi bi-headset fs-1 text-primary mb-3 animate__animated animate__pulse animate__infinite animate__delay-2s"
+            ></i>
+            {# Changed icon size, color, added pulsing animation and delay #}
+            <h5 class="card-title">Dedicated Support</h5>
+            {# Changed title #}
+            <p class="card-text text-muted">
+              {# Added text-muted #} Our friendly and knowledgeable team is
+              available to assist you with product questions, order inquiries,
+              and after-sales support around the clock.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-lg-6 col-md-6 col-sm-12 my-2">
-      <img
-        class="img-fluid w-100"
-        src="{% static 'images/oppo_2.avif' %}"
-        alt="Oppo"
-      />
-    </div>
-    <div class="col-lg-6 col-md-6 col-sm-12 my-2">
-      <img
-        class="img-fluid w-100"
-        src="{% static 'images/pixel_1.jpg' %}"
-        alt="Pixel"
-      />
-    </div>
+</section>
+
+<section
+  class="py-5 bg-primary text-white text-center animate__animated animate__fadeIn"
+  id="cta"
+>
+  {# Added section tag, id, padding, background, color, and animation #}
+  <div class="container">
+    <h2 class="mb-3 animate__animated animate__fadeInDown">
+      Can't Find What You're Looking For?
+    </h2>
+    {# Added margin and animation #}
+    <p class="lead mb-4 animate__animated animate__fadeInUp animate__delay-1s">
+      {# Added lead class, margin, and animation #} Explore our full catalog or
+      contact our support team for personalized assistance!
+    </p>
+    <a
+      href="{% url 'store' %}"
+      class="btn btn-outline-light btn-lg rounded-pill me-3 animate__animated animate__zoomIn animate__delay-1-5s"
+    >
+      {# Added button style, size, margin, and animation #} Browse All Products
+      <i class="bi bi-grid"></i> {# Added icon #}
+    </a>
+    <a
+      href="#"
+      class="btn btn-light btn-lg rounded-pill animate__animated animate__zoomIn animate__delay-2s"
+    >
+      {# Added button style, size, and animation #} Contact Us
+      <i class="bi bi-chat-dots"></i> {# Added icon #}
+    </a>
   </div>
-</div>
+</section>
+
+<style>
+  /* General Enhancements */
+  body {
+    background-color: #f8f9fa; /* Light gray background */
+    color: #333; /* Darker text color */
+  }
+
+  .section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #343a40; /* Dark grey */
+    margin-bottom: 1.5rem;
+  }
+
+  .section-subtitle {
+    font-size: 1.2rem;
+    color: #6c757d; /* Medium grey */
+    margin-bottom: 3rem;
+  }
+
+  /* Carousel Styling */
+  .carousel-img {
+    object-fit: cover;
+    height: 700px; /* Fixed height */
+    filter: brightness(0.85); /* Slightly less bright */
+    transition: filter 0.5s ease; /* Smooth transition */
+  }
+
+  .carousel-item:hover .carousel-img {
+    filter: brightness(0.95); /* Slightly brighter on hover */
+  }
+
+  .carousel-caption {
+    bottom: 15%; /* Adjusted position */
+    text-align: center;
+    padding: 2.5rem; /* Increased padding */
+    background: rgba(0, 0, 0, 0.6); /* Darker background with more opacity */
+    border-radius: 15px; /* More rounded corners */
+    max-width: 900px; /* Max width for caption */
+    margin: 0 auto;
+    transform: translateY(0); /* Ensure no initial transform */
+    transition: transform 0.5s ease-in-out; /* Smooth transition */
+  }
+
+  /* Gradient overlay for carousel */
+  .overlay-gradient {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 250px; /* Increased height */
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.8),
+      /* More opacity at the bottom */ transparent
+    );
+  }
+
+  /* Card Styling (Product, Review, Benefit) */
+  .card {
+    border: none; /* Remove default border */
+    border-radius: 15px; /* Rounded corners */
+    overflow: hidden; /* Hide overflowing content */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-10px); /* Lift card on hover */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12); /* Larger shadow on hover */
+  }
+
+  .product-img {
+    height: 250px; /* Fixed height for category images */
+    object-fit: cover;
+    background: linear-gradient(
+      180deg,
+      #e9ecef,
+      #ffffff
+    ); /* Subtle gradient background */
+    border-bottom: 1px solid #dee2e6; /* Add a subtle border */
+  }
+
+  .product-img-sm {
+    height: 200px; /* Fixed height for smaller product images (e.g., featured/new arrivals) */
+    object-fit: cover;
+    background: linear-gradient(
+      180deg,
+      #e9ecef,
+      #ffffff
+    ); /* Subtle gradient background */
+    border-bottom: 1px solid #dee2e6; /* Add a subtle border */
+  }
+
+  .card-body {
+    padding: 2rem; /* Increased padding */
+  }
+
+  .card-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #007bff; /* Primary color for titles */
+  }
+
+  .card-text {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .card-price {
+    font-size: 1.5rem;
+    color: #28a745; /* Success color for price */
+    margin-top: 1rem;
+  }
+
+  /* Review Specific Styling */
+  .review-card {
+    background-color: #ffffff; /* White background */
+  }
+
+  .star-rating i {
+    font-size: 1.2rem;
+  }
+
+  .review-text {
+    font-style: italic;
+    color: #5a6268; /* Slightly darker grey for quotes */
+  }
+
+  .review-author {
+    font-weight: 600;
+  }
+
+  /* Benefit Specific Styling */
+  .benefit-card {
+    background-color: #ffffff; /* White background */
+    border: 1px solid #007bff; /* Primary color border */
+  }
+
+  .benefit-card .card-title {
+    color: #343a40; /* Dark grey */
+  }
+
+  /* Animation Customization (using animate.css) */
+  .animate__animated.animate__faster {
+    animation-duration: 0.8s; /* Default faster duration */
+  }
+
+  .animate__animated.animate__delay-1s {
+    animation-delay: 1s;
+  }
+  .animate__animated.animate__delay-1-5s {
+    animation-delay: 1.5s;
+  }
+  .animate__animated.animate__delay-2s {
+    animation-delay: 2s;
+  }
+  .animate__animated.animate__delay-2-5s {
+    animation-delay: 2.5s;
+  }
+  .animate__animated.animate__delay-3s {
+    animation-delay: 3s;
+  }
+  .animate__animated.animate__delay-3-5s {
+    animation-delay: 3.5s;
+  }
+
+  .animate__infinite {
+    animation-iteration-count: infinite;
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 991px) {
+    /* Medium devices and below */
+    .carousel-img {
+      height: 600px;
+    }
+    .carousel-caption {
+      bottom: 10%;
+      padding: 1.5rem;
+    }
+    .carousel-caption h3 {
+      font-size: 2rem;
+    }
+    .carousel-caption p {
+      font-size: 1.2rem;
+    }
+    .overlay-gradient {
+      height: 200px;
+    }
+    .section-title {
+      font-size: 2rem;
+    }
+    .section-subtitle {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+    .card-body {
+      padding: 1.5rem;
+    }
+    .card-title {
+      font-size: 1.3rem;
+    }
+    .card-text {
+      font-size: 0.95rem;
+    }
+    .btn-lg {
+      font-size: 1rem;
+      padding: 0.5rem 1.5rem;
+    }
+  }
+
+  @media (max-width: 767px) {
+    /* Small devices and below */
+    .carousel-img {
+      height: 400px;
+    }
+    .carousel-caption {
+      bottom: 5%;
+      padding: 1rem;
+      max-width: 95%;
+    }
+    .carousel-caption h3 {
+      font-size: 1.5rem;
+    }
+    .carousel-caption p {
+      font-size: 0.9rem;
+      display: none; /* Hide paragraph on very small screens */
+    }
+    .carousel-caption a {
+      font-size: 0.9rem;
+      padding: 0.4rem 1rem;
+    }
+    .overlay-gradient {
+      height: 150px;
+    }
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    .section-subtitle {
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .card-body {
+      padding: 1rem;
+    }
+    .card-title {
+      font-size: 1.2rem;
+    }
+    .card-text {
+      font-size: 0.9rem;
+    }
+    .product-img,
+    .product-img-sm {
+      height: 180px; /* Smaller image height */
+    }
+    .btn {
+      font-size: 0.9rem;
+      padding: 0.4rem 1rem;
+    }
+    .btn-lg {
+      font-size: 0.9rem;
+      padding: 0.5rem 1.2rem;
+    }
+  }
+</style>
 
 {% endblock %}
