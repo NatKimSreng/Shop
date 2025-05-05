@@ -286,8 +286,8 @@
           deals, seasonal promotions, and a straightforward return policy.
         </p>
         <p class="animate__animated animate__fadeInUp animate__delay-3s">
-          Shop with confidence at OTDENG Store—your gateway to the future of
-          mobile technology!
+          Shop with confidence at Get Me PhoneShop Store—your gateway to the
+          future of mobile technology!
         </p>
         <a
           href="#categories"
@@ -423,7 +423,7 @@
             </p>
             <a
               href="{% url 'category' 'Iphone' %}"
-              class="btn btn-outline-primary rounded-pill btn-animated"
+              class="btn btn-outline-dark btn-sm rounded-pill btn-animated"
               >Shop iPhone <i class="bi bi-arrow-right"></i
             ></a>
           </div>
@@ -486,7 +486,7 @@
             </p>
             <a
               href="{% url 'category' 'Samsung' %}"
-              class="btn btn-outline-primary rounded-pill btn-animated"
+              class="btn btn-outline-dark btn-sm rounded-pill btn-animated"
               >Shop Samsung <i class="bi bi-arrow-right"></i
             ></a>
           </div>
@@ -549,7 +549,7 @@
             </p>
             <a
               href="{% url 'category' 'Pixel' %}"
-              class="btn btn-outline-primary rounded-pill btn-animated"
+              class="btn btn-outline-dark btn-sm rounded-pill btn-animated"
               >Shop Pixel <i class="bi bi-arrow-right"></i
             ></a>
           </div>
@@ -612,7 +612,7 @@
             </p>
             <a
               href="{% url 'category' 'Oppo' %}"
-              class="btn btn-outline-primary rounded-pill btn-animated"
+              class="btn btn-outline-dark btn-sm rounded-pill btn-animated"
               >Shop OPPO <i class="bi bi-arrow-right"></i
             ></a>
           </div>
@@ -675,7 +675,7 @@
             </p>
             <a
               href="{% url 'category' 'Vivo' %}"
-              class="btn btn-outline-primary rounded-pill btn-animated"
+              class="btn btn-outline-dark btn-sm rounded-pill btn-animated"
               >Shop Vivo <i class="bi bi-arrow-right"></i
             ></a>
           </div>
@@ -738,7 +738,7 @@
             </p>
             <a
               href="{% url 'category' 'Rog' %}"
-              class="btn btn-outline-primary rounded-pill btn-animated"
+              class="btn btn-outline-dark btn-sm rounded-pill btn-animated"
               >Shop ROG <i class="bi bi-arrow-right"></i
             ></a>
           </div>
@@ -756,7 +756,7 @@
 <section id="newarrival" class="py-5 bg-light">
   <div class="container">
     <span
-      class="badge bg-danger d-block mx-auto mb-3 animate__animated animate__fadeInDown"
+      class="badge bg-danger d-block mx-auto mb-3 animate__animated animate__fadeIn"
       style="width: fit-content"
       >Just Arrived</span
     >
@@ -765,148 +765,117 @@
     >
       New Arrivals
     </h2>
-    <div
-      class="divider-custom animate__animated animate__fadeInLeft animate__delay-1s"
-    ></div>
+    <div class="divider-custom animate__animated animate__fadeIn"></div>
     <p
-      class="section-subtitle text-center mb-5 animate__animated animate__fadeIn animate__delay-1s"
+      class="section-subtitle text-center mb-5 animate__animated animate__fadeIn"
     >
       Stay ahead with the latest smartphones featuring groundbreaking technology
       and sleek designs, just added to our inventory.
     </p>
-
     <div class="row row-cols-1 row-cols-md-4 g-4">
-      <!-- Existing iPhone 16 Pro Entry -->
-      <div class="col animate__animated animate__flipInY">
-        <div class="flip-card">
-          <div class="flip-card-inner">
-            <div class="flip-card-front">
-              <img
-                src="{% static 'images/iphones.jpg' %}"
-                class="card-img-top product-img-sm"
-                alt="iPhone"
-              />
-              <div class="flip-card-content">
-                <h5>iPhone 16 Pro</h5>
-                <span class="badge bg-primary">$1,199</span>
-              </div>
-            </div>
-            <div class="flip-card-back">
-              <h5>iPhone 16 Pro</h5>
-              <ul class="feature-list">
-                <li><i class="bi bi-cpu"></i> A18 Pro Chip</li>
-                <li><i class="bi bi-camera"></i> 48MP Fusion Camera</li>
-                <li><i class="bi bi-display"></i> 6.3" ProMotion Display</li>
-                <li><i class="bi bi-battery"></i> All-day Battery Life</li>
-                <li><i class="bi bi-shield"></i> Titanium Construction</li>
-              </ul>
+      <div class="col animate__animated animate__fadeIn">
+        <div class="card h-100 product-card shadow-sm">
+          <img
+            src="{% static 'images/iphone16.jpg' %}"
+            class="card-img-top product-img-sm"
+            alt="iPhone"
+          />
+          <div class="card-body">
+            <h5 class="card-title">iPhone 16 Pro</h5>
+            <p class="card-text">
+              <i class="bi bi-cpu"></i> A18 Pro Chip<br />
+              <i class="bi bi-camera"></i> 48MP Fusion Camera<br />
+              <i class="bi bi-display"></i> 6.3" ProMotion Display
+            </p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-primary">$1,199</span>
               <a
                 href="{% url 'category' 'Iphone' %}"
-                class="btn btn-light rounded-pill mt-3"
-                >Shop Now <i class="bi bi-bag"></i
-              ></a>
+                class="btn btn-outline-dark btn-sm"
+              >
+                Shop Now <i class="bi bi-bag"></i>
+              </a>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- New Arrival: Samsung Galaxy Z Fold 7 -->
-      <div class="col animate__animated animate__flipInY animate__delay-0-5s">
-        <div class="flip-card">
-          <div class="flip-card-inner">
-            <div class="flip-card-front">
-              <img
-                src="{% static 'images/samsung_fold.jpg' %}"
-                class="card-img-top product-img-sm"
-                alt="Samsung Galaxy Z Fold 7"
-              />
-              <div class="flip-card-content">
-                <h5>Galaxy Z Fold 7</h5>
-                <span class="badge bg-primary">$1,899</span>
-              </div>
-            </div>
-            <div class="flip-card-back">
-              <h5>Galaxy Z Fold 7</h5>
-              <ul class="feature-list">
-                <li><i class="bi bi-cpu"></i> Snapdragon 8 Gen 4</li>
-                <li><i class="bi bi-camera"></i> 200MP Main Camera</li>
-                <li><i class="bi bi-display"></i> 7.6" Dynamic AMOLED 2X</li>
-                <li><i class="bi bi-pen"></i> Enhanced S Pen Support</li>
-                <li><i class="bi bi-shield"></i> IP68 Water Resistance</li>
-              </ul>
+      <div class="col animate__animated animate__fadeIn animate__delay-1s">
+        <div class="card h-100 product-card shadow-sm">
+          <img
+            src="{% static 'images/s_25.jpg' %}"
+            class="card-img-top product-img-sm"
+            alt="Samsung Galaxy"
+          />
+          <div class="card-body">
+            <h5 class="card-title">Galaxy S25 Ultra</h5>
+            <p class="card-text">
+              <i class="bi bi-cpu"></i> Snapdragon 8 Gen 3<br />
+              <i class="bi bi-camera"></i> 200MP Main Camera<br />
+              <i class="bi bi-display"></i> 6.9" AMOLED Display
+            </p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-primary">$1,099</span>
               <a
                 href="{% url 'category' 'Samsung' %}"
-                class="btn btn-light rounded-pill mt-3"
-                >Shop Now <i class="bi bi-bag"></i
-              ></a>
+                class="btn btn-outline-dark btn-sm"
+              >
+                Shop Now <i class="bi bi-bag"></i>
+              </a>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- New Arrival: Google Pixel 9 Pro XL -->
-      <div class="col animate__animated animate__flipInY animate__delay-1s">
-        <div class="flip-card">
-          <div class="flip-card-inner">
-            <div class="flip-card-front">
-              <img
-                src="{% static 'images/pixel_9_pro.jpg' %}"
-                class="card-img-top product-img-sm"
-                alt="Google Pixel 9 Pro XL"
-              />
-              <div class="flip-card-content">
-                <h5>Pixel 9 Pro XL</h5>
-                <span class="badge bg-primary">$1,099</span>
-              </div>
-            </div>
-            <div class="flip-card-back">
-              <h5>Pixel 9 Pro XL</h5>
-              <ul class="feature-list">
-                <li><i class="bi bi-cpu"></i> Tensor G4 Chip</li>
-                <li><i class="bi bi-camera"></i> 50MP Triple Camera</li>
-                <li><i class="bi bi-display"></i> 6.8" LTPO OLED</li>
-                <li><i class="bi bi-battery"></i> 5000mAh Battery</li>
-                <li><i class="bi bi-android2"></i> Android 15</li>
-              </ul>
+      <div class="col animate__animated animate__fadeIn animate__delay-2s">
+        <div class="card h-100 product-card shadow-sm">
+          <img
+            src="{% static 'images/pixel.jpg' %}"
+            class="card-img-top product-img-sm"
+            alt="Google Pixel"
+          />
+          <div class="card-body">
+            <h5 class="card-title">Google Pixel 9 Pro</h5>
+            <p class="card-text">
+              <i class="bi bi-cpu"></i> Tensor G4 Chip<br />
+              <i class="bi bi-camera"></i> 50MP Quad Camera<br />
+              <i class="bi bi-magic"></i> Advanced AI Features
+            </p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-primary">$999</span>
               <a
-                href="{% url 'category' 'Pixel' %}"
-                class="btn btn-light rounded-pill mt-3"
-                >Shop Now <i class="bi bi-bag"></i
-              ></a>
+                href="{% url 'category' 'Google' %}"
+                class="btn btn-outline-dark btn-sm"
+              >
+                Shop Now <i class="bi bi-bag"></i>
+              </a>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- New Arrival: OPPO Find X8 Pro -->
-      <div class="col animate__animated animate__flipInY animate__delay-1-5s">
-        <div class="flip-card">
-          <div class="flip-card-inner">
-            <div class="flip-card-front">
-              <img
-                src="{% static 'images/oppo_find_x8.jpg' %}"
-                class="card-img-top product-img-sm"
-                alt="OPPO Find X8 Pro"
-              />
-              <div class="flip-card-content">
-                <h5>OPPO Find X8 Pro</h5>
-                <span class="badge bg-primary">$999</span>
-              </div>
-            </div>
-            <div class="flip-card-back">
-              <h5>OPPO Find X8 Pro</h5>
-              <ul class="feature-list">
-                <li><i class="bi bi-cpu"></i> Dimensity 9400</li>
-                <li><i class="bi bi-camera"></i> 50MP Quad Camera</li>
-                <li><i class="bi bi-display"></i> 6.78" AMOLED 120Hz</li>
-                <li><i class="bi bi-battery-charging"></i> 100W SuperVOOC</li>
-                <li><i class="bi bi-shield"></i> Gorilla Glass Victus 2</li>
-              </ul>
+      <div class="col animate__animated animate__fadeIn animate__delay-3s">
+        <div class="card h-100 product-card shadow-sm">
+          <img
+            src="{% static 'images/rog_24.png' %}"
+            class="card-img-top product-img-sm"
+            alt="Rog"
+          />
+          <div class="card-body">
+            <h5 class="card-title">ROG Phone 9</h5>
+            <p class="card-text">
+              <i class="bi bi-cpu"></i> Snapdragon 8 Elite<br />
+              <i class="bi bi-camera"></i> 50MP main camera<br />
+              <i class="bi bi-lightning"></i> 5800mAh 65W fast charging
+            </p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-primary">$899</span>
               <a
-                href="{% url 'category' 'Oppo' %}"
-                class="btn btn-light rounded-pill mt-3"
-                >Shop Now <i class="bi bi-bag"></i
-              ></a>
+                href="{% url 'category' 'Rog' %}"
+                class="btn btn-outline-dark btn-sm"
+              >
+                Shop Now <i class="bi bi-bag"></i>
+              </a>
             </div>
           </div>
         </div>

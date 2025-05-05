@@ -184,6 +184,7 @@ h6 {
   border-radius: 980px;
   padding: 8px 16px;
   font-weight: 400;
+  margin: 10px 20px;
   font-size: 14px;
   transition: all 0.3s cubic-bezier(0.28, 0.11, 0.32, 1);
   border: none;
@@ -679,4 +680,8 @@ h6 {
 
 .list-unstyled li a:hover {
   color: rgb(255, 222, 32) !important;
+}
+
+.btn-outline-dark:hover {
+  color: black;
 }
