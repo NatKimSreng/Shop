@@ -76,13 +76,12 @@
         box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
       }
       .btn-primary {
-        background: linear-gradient(90deg, #6f42c1, #5a32a3);
         border: none;
         border-radius: 0 0.5rem 0.5rem 0;
         transition: background 0.3s ease;
       }
       .btn-primary:hover {
-        background: linear-gradient(90deg, #5a32a3, #4a2a8c);
+        background: linear-gradient(90deg, rgb(0, 79, 159), #0077ed);
       }
       .dropdown-menu {
         margin-top: 0.125rem;
@@ -344,7 +343,7 @@
         <div class="row gy-4">
           <!-- Company Info -->
           <div class="col-md-4">
-            <h5 class="mb-4 fw-bold">Get Me Phone Shop</h5>
+            <h5 class="mb-4 fw-bold text-white">Get Me Phone Shop</h5>
             <p class="text-light Fafafafa">
               Discover premium smartphones with fast, secure shipping and
               exceptional customer service. Shop confidently with us.
@@ -366,14 +365,11 @@
               <a href="#" class="text-light me-3 fs-5" aria-label="LinkedIn">
                 <i class="bi bi-linkedin"></i>
               </a>
-              <a href="#" class="text-light me-3 fs-5" aria-label="YouTube">
-                <i class="bi bi-youtube"></i>
-              </a>
             </div>
           </div>
           <!-- Quick Links -->
           <div class="col-md-2">
-            <h5 class="mb-4 fw-bold">Explore</h5>
+            <h5 class="mb-4 fw-bold text-white">Explore</h5>
             <ul class="list-unstyled">
               <li class="mb-2">
                 <a
@@ -403,7 +399,7 @@
           </div>
           <!-- Support -->
           <div class="col-md-3">
-            <h5 class="mb-4 fw-bold">Support</h5>
+            <h5 class="mb-4 fw-bold text-white">Support</h5>
             <ul class="list-unstyled">
               <li class="mb-2">
                 <a href="#" class="text-light text-decoration-none"
@@ -434,10 +430,11 @@
           </div>
           <!-- Newsletter -->
           <div class="col-md-3">
-            <h5 class="mb-4 fw-bold">Stay Connected</h5>
+            <h5 class="mb-4 fw-bold text-white">Stay Connected</h5>
             <p class="text-light">
               Join our newsletter for exclusive deals and updates.
             </p>
+            {% comment %}
             <form>
               <div class="input-group mb-3">
                 <input
@@ -455,6 +452,7 @@
                 </button>
               </div>
             </form>
+            {% endcomment %}
           </div>
         </div>
         <!-- Bottom Footer -->
