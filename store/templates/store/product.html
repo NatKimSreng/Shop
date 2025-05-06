@@ -1,4 +1,103 @@
-{% extends 'store/main.html' %}{% load static %} {% block content %}
+{% extends 'store/main.html' %} {% load static %} {% block content %}
+<style>
+  .product-img {
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .product-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+  .box-element {
+    position: relative;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+  }
+  .sale-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(90deg, #6f42c1, #5a32a3);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+  .out-of-stock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+  }
+  .out-of-stock-text {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  .card-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+  }
+  .description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #555;
+  }
+  .btn-secondary {
+    background: linear-gradient(90deg, #6f42c1, #5a32a3);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+  .btn-secondary:hover {
+    background: linear-gradient(90deg, #5a32a3, #4a2a8c);
+    transform: translateY(-2px);
+  }
+  .btn-outline-secondary {
+    border-color: #6f42c1;
+    color: #6f42c1;
+    border-radius: 0.5rem;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  .btn-outline-secondary:hover {
+    background-color: #6f42c1;
+    color: white;
+    transform: translateY(-2px);
+  }
+  .form-select {
+    border-radius: 0.5rem;
+    border: 1px solid #ced4da;
+    transition: border-color 0.3s ease;
+  }
+  .form-select:focus {
+    border-color: #6f42c1;
+    box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
+  }
+  .form-label {
+    font-weight: 500;
+    color: #333;
+  }
+</style>
+
 <div class="container my-5">
   <div class="row align-items-center">
     <div class="col-lg-6 mb-4">
@@ -13,7 +112,8 @@
           <span class="out-of-stock-text">Out of Stock</span>
         </div>
         {% endif %} {% if product.Is_sale %}
-        <span class="sale-badge">Sale</span> {% endif %}
+        <span class="sale-badge">Sale</span>
+        {% endif %}
       </div>
     </div>
     <div class="col-lg-6">
@@ -34,7 +134,6 @@
       {% endif %}
       <p class="text-muted mb-4 description">{{ product.description }}</p>
       {% if product.Is_sale %}
-      <table class="table table-bordered mt-3"></table>
       <div class="mb-3">
         <label for="qty-cart" class="form-label">Quantity:</label>
         <select id="qty-cart" class="form-select w-25">
@@ -61,17 +160,15 @@
   </div>
 </div>
 
-<!-- Include jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Your custom script -->
+<!-- Include jQuery (already included in main.html, so not needed here) -->
+<!-- Custom Script -->
 <script>
   var $j = jQuery.noConflict();
   $j(document).ready(function () {
-    $j(document).on("click", "#add-cart", function (e) {
+    $j(document).on("click", ".add-cart", function (e) {
       e.preventDefault();
-
-      var product_id = $j("#add-cart").val();
+      var $button = $j(this);
+      var product_id = $button.val();
       var product_qty = $j("#qty-cart").val();
 
       if (
@@ -88,25 +185,25 @@
         return;
       }
 
+      $button.prop("disabled", true).text("Adding...");
       $j.ajax({
         type: "POST",
         url: '{% url "cart_add" %}',
+        headers: { "X-CSRFToken": "{{ csrf_token }}" },
         data: {
           product_id: product_id,
           product_qty: product_qty,
-          csrfmiddlewaretoken: "{{ csrf_token }}",
           action: "post",
         },
         success: function (json) {
-          document.getElementById("cart_quantity").textContent = json.qty;
-          // Optionally update other UI elements or show a success message
+          $button.prop("disabled", false).text("Add to Cart");
+          if (document.getElementById("cart_quantity")) {
+            document.getElementById("cart_quantity").textContent = json.qty;
+          }
           alert("Product added to cart!");
         },
-        error: function (xhr, errmsg, err) {
-          console.error(
-            "Error:",
-            xhr.responseJSON ? xhr.responseJSON.error : "Unknown error"
-          );
+        error: function (xhr) {
+          $button.prop("disabled", false).text("Add to Cart");
           alert(
             "Failed to add to cart: " +
               (xhr.responseJSON ? xhr.responseJSON.error : "Unknown error")
@@ -116,5 +213,4 @@
     });
   });
 </script>
-
 {% endblock content %}
