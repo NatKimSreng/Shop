@@ -1,40 +1,295 @@
 {% extends 'store/main.html' %} {% load static %} {% block content %}
+<style>
+  /* Enhanced styling for cart page */
+  .box-element {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+    border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 25px;
+    background-color: #fff;
+    border: 1px solid #f0f0f0;
+  }
+
+  .cart-row {
+    display: flex;
+    align-items: center;
+    padding: 18px 0;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.3s;
+  }
+
+  .cart-row:hover {
+    background-color: #f9f9f9;
+  }
+
+  .row-image {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    background-color: #fafafa;
+    padding: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+
+  .btn-outline-dark {
+    transition: all 0.3s;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 6px;
+  }
+
+  .btn-outline-dark:hover {
+    background-color: #343a40;
+    color: white;
+  }
+
+  .btn-success {
+    transition: all 0.3s;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    border: none;
+  }
+
+  .btn-success:hover {
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+  }
+
+  .table {
+    margin-bottom: 0;
+  }
+
+  .qty-number {
+    font-weight: 600;
+    color: #343a40;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .quantity-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f8f9fa;
+    border-radius: 30px;
+    padding: 5px;
+    border: 1px solid #e5e5e5;
+    width: 120px;
+    margin: 5px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .qty-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border: 1px solid #dee2e6;
+    color: #343a40;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    line-height: 1;
+  }
+
+  .qty-btn-add {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+  }
+
+  .qty-btn-minus {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+  }
+
+  .qty-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  .qty-btn:active {
+    transform: scale(0.95);
+  }
+
+  /* Info box styles */
+  .info-box {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    border-left: 4px solid #007bff;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .info-box-shipping {
+    border-left-color: #28a745;
+  }
+
+  .info-box-payment {
+    border-left-color: #ffc107;
+  }
+
+  .info-box-security {
+    border-left-color: #17a2b8;
+  }
+
+  .info-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #343a40;
+  }
+
+  .info-text {
+    color: #6c757d;
+    margin-bottom: 5px;
+  }
+
+  .info-text:last-child {
+    margin-bottom: 0;
+  }
+
+  .help-text {
+    font-size: 13px;
+    color: #6c757d;
+    margin-top: 5px;
+    font-style: italic;
+  }
+
+  .empty-cart-container {
+    padding: 40px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .empty-cart {
+    font-size: 18px;
+    color: #6c757d;
+    font-weight: 300;
+  }
+
+  .item-price,
+  .item-total {
+    font-weight: 600;
+    color: #343a40;
+  }
+
+  .delete-cart {
+    background-color: white;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    margin-top: 8px;
+    transition: all 0.2s;
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 5px 12px;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .delete-cart:hover {
+    background-color: #dc3545;
+    color: white;
+    box-shadow: 0 2px 5px rgba(220, 53, 69, 0.3);
+  }
+
+  /* Summary header enhancements */
+  .cart-summary {
+    background: linear-gradient(to right, #f8f9fa, #e9ecef);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .cart-header {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #343a40;
+    position: relative;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e9ecef;
+  }
+
+  /* Table header styling */
+  .cart-header-row {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    font-weight: 600;
+    color: #495057;
+  }
+
+  /* Link color */
+  a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+</style>
+
 <div class="row">
   <div class="col-lg-12">
     <div class="box-element">
+      <h2 class="cart-header">Shopping Cart</h2>
       <a class="btn btn-outline-dark" href="{% url 'store' %}"
         >← Continue Shopping</a
       >
 
+      <div class="info-box info-box-shipping">
+        <p class="info-title">Shipping Information</p>
+        <p class="info-text">Free standard shipping on orders over $50.</p>
+        <p class="info-text">Express delivery (1-2 business days): $12.99</p>
+        <p class="info-text">Standard delivery (3-5 business days): $5.99</p>
+        <p class="help-text">
+          Shipping options can be selected during checkout.
+        </p>
+      </div>
+
       <br />
-      <br />
-      <table class="table">
-        <tr>
-          <th>
-            <h5>
-              Items: <strong id="cart-items">{{order.get_cart_items}}</strong>
-            </h5>
-          </th>
-          <th>
-            <h5>
-              Total:<strong>${{order.get_cart_total|floatformat:2}}</strong>
-            </h5>
-          </th>
-          <th>
-            <a
-              style="float: right; margin: 5px"
-              class="btn btn-success"
-              href="{% url 'checkout' %}"
-              >Checkout</a
-            >
-          </th>
-        </tr>
-      </table>
+      <div class="cart-summary">
+        <table class="table">
+          <tr>
+            <th>
+              <h5>
+                Items: <strong id="cart-items">{{order.get_cart_items}}</strong>
+              </h5>
+            </th>
+            <th>
+              <h5>
+                Total:<strong>${{order.get_cart_total|floatformat:2}}</strong>
+              </h5>
+            </th>
+            <th>
+              <a
+                style="float: right; margin: 5px"
+                class="btn btn-success"
+                href="{% url 'checkout' %}"
+                >Checkout</a
+              >
+            </th>
+          </tr>
+        </table>
+      </div>
     </div>
 
     <br />
     <div class="box-element">
-      <div class="cart-row">
+      <div class="cart-row cart-header-row">
         <div style="flex: 2"></div>
         <div style="flex: 2"><strong>Item</strong></div>
         <div style="flex: 1"><strong>Price</strong></div>
@@ -51,39 +306,61 @@
           <p class="item-price">${{item.product.price|floatformat:2}}</p>
         </div>
         <div style="flex: 1">
-          <p class="quantity">{{item.quantity}}</p>
-          <div class="quantity">
-            <img
-              class="chg-quantity update-cart"
-              data-product-id="{{item.product.id}}"
-              data-action="add"
-              src="{% static 'images/arrow-up.png' %}"
-            />
-            <img
-              class="chg-quantity update-cart"
+          <div class="quantity-control">
+            <button
+              class="qty-btn qty-btn-minus update-cart"
               data-product-id="{{item.product.id}}"
               data-action="remove"
-              src="{% static 'images/arrow-down.png' %}"
-            />
+            >
+              -
+            </button>
+            <span class="qty-number">{{item.quantity}}</span>
+            <button
+              class="qty-btn qty-btn-add update-cart"
+              data-product-id="{{item.product.id}}"
+              data-action="add"
+            >
+              +
+            </button>
           </div>
         </div>
         <div style="flex: 1">
           <p class="item-total">${{item.get_total|floatformat:2}}</p>
-          <button class="btn btn-danger btn-sm delete-cart" data-product-id="{{item.product.id}}" data-action="post">
+          <button
+            class="btn btn-danger btn-sm delete-cart"
+            data-product-id="{{item.product.id}}"
+            data-action="post"
+          >
             Remove
           </button>
         </div>
       </div>
       {% endfor %}
+
+      <div class="info-box info-box-payment">
+        <p class="info-title">Payment Options</p>
+        <p class="info-text">
+          We accept all major credit cards, PayPal, and Apple Pay.
+        </p>
+        <p class="info-text">All transactions are secure and encrypted.</p>
+      </div>
+
+      <div class="info-box info-box-security">
+        <p class="info-title">Order Information</p>
+        <p class="info-text">Returns: Easy 30-day returns on most items.</p>
+        <p class="info-text">
+          Need Help? Contact our customer service at support@example.com
+        </p>
+      </div>
+
       {% else %}
       <div class="cart-row empty-cart-container">
-        <p class="empty-cart text-center">
+        <p class="empty-cart">
           Your cart is empty. Please add items to your cart.
         </p>
       </div>
       {% endif %}
-      </div>
-      {% endblock content %}
     </div>
   </div>
 </div>
+{% endblock content %}
