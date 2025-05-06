@@ -25,6 +25,11 @@
           <!-- Registration Form -->
           <form method="POST" action="{% url 'update_info' %}">
             {% csrf_token %} {{ form.as_p }}
+
+            <br /><br />
+            <p>shipping form</p>
+            <p>{{ shipping_form.as_p }}</p>
+
             <div class="d-grid">
               <button type="submit" class="btn btn-secondary">Update</button>
             </div>
