@@ -99,17 +99,18 @@ def registerPage(request):
             form.save()
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            messages.success(request, 'User created')
-            return redirect('store')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, 'Account created successfully.', extra_tags='alert-success')
+                return redirect('store')
+            else:
+                messages.error(request, 'Authentication failed. Please try again.', extra_tags='alert-danger')
+                return redirect('register')
         else:
-            messages.error(request, 'Error creating user')
-            return redirect('register')
-    else:
-        form = SignUpForm()
-        context = {'form':form}
-        return render(request, 'store/register.html', context)
+            messages.error(request, 'Please correct the errors below.', extra_tags='alert-danger')
+    context = {'form': form}
+    return render(request, 'store/register.html', context)
 
 def product(request, pk):
     product = Product.objects.get(id=pk)

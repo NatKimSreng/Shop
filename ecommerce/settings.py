@@ -141,3 +141,6 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 CART_SESSION_ID = 'cart'
 CSRF_COOKIE_SECURE = False  # Set to True in production
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
+INSTALLED_APPS = [... 'corsheaders', ...]
+MIDDLEWARE = ['corsheaders.middleware.CorsMiddleware', ...]
+CORS_ALLOWED_ORIGINS = ['https://musical-arithmetic-c4654d.netlify.app']
