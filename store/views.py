@@ -67,9 +67,6 @@ def store(request):
 	context = {'products':products}
 	return render(request, 'store/store.html', context)
 
-def checkout(request):
-	context = {}
-	return render(request, 'store/checkout.html', context)
 
 def loginPage(request):
     if request.method == 'POST':

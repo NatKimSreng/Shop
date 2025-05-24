@@ -1,1 +1,60 @@
-<h1>hi</h1>
+{% extends 'store/main.html' %} {% block content %}
+<div class="container mt-5">
+  <h1>Order Confirmed</h1>
+  <div class="alert alert-success">
+    Thank you for your purchase! Your order has been successfully placed.
+  </div>
+
+  <h3>Order Details</h3>
+  <p><strong>Order ID:</strong> {{ order_id }}</p>
+
+  <h4>Shipping Address</h4>
+  <p>
+    {{ shipping_address.full_name }}<br />
+    {{ shipping_address.address1 }}<br />
+    {% if shipping_address.address2 %} {{ shipping_address.address2 }}<br />
+    {% endif %} {{ shipping_address.city }}{% if shipping_address.state %}, {{
+    shipping_address.state }}{% endif %} {{ shipping_address.zipcode }}<br />
+    {{ shipping_address.country }}<br />
+    <strong>Email:</strong> {{ shipping_address.email }}
+  </p>
+
+  <h4>Delivery Option</h4>
+  <p>
+    {{ delivery_option.name }} - ${{ delivery_option.price|floatformat:2 }}<br />
+    Estimated Delivery: {{ delivery_option.estimated_days }} day{% if
+    delivery_option.estimated_days != 1 %}
+  </p>
+
+  <h4>Payment Method</h4>
+  <p>{{ payment_method }}</p>
+
+  <h4>Order Items</h4>
+  {% if order_items %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in order_items %}
+      <tr>
+        <td>{{ item.product_name }}</td>
+        <td>${{ item.price|floatformat:2 }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>${{ item.total|floatformat:2 }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No items in this order.</p>
+  {% endif %}
+
+  <a href="{% url 'home' %}" class="btn btn-primary mt-4">Continue Shopping</a>
+</div>
+{% endblock %}
