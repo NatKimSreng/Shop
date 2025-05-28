@@ -105,6 +105,15 @@ class Order(models.Model):
         item_total = sum(item.get_total() for item in self.orderitem_set.all())
         delivery_cost = self.delivery_option.price if self.delivery_option else 0
         return item_total + delivery_cost
+    @property
+    def is_paid(self):
+        return self.status in [self.StatusChoices.SHIPPED, self.StatusChoices.DELIVERED]
+    @property
+    def is_cancelled(self):
+        return self.status == self.StatusChoices.CANCELLED
+    @property
+    def is_get_total(self):
+        return self.get_total()
 
 @receiver(pre_save, sender=Order)
 def set_shipped_date_on_update(sender, instance, **kwargs):

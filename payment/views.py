@@ -3,16 +3,24 @@ from django.shortcuts import render, redirect
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 import logging
-
+import qrcode
+from io import BytesIO
+import base64
+from django.shortcuts import render, redirect
+from django.contrib import messages
+import logging
+from cart.cart import Cart
+from store.models import Product
+from .forms import ShippingForm, PaymentForm
+from .models import ShippingAddress, Order, OrderItem, DeliveryOption
+import qrcode
+from io import BytesIO
+import base64
 logger = logging.getLogger(__name__)
 
 @login_required
-def checkout(request):
-    from cart.cart import Cart
-    from store.models import Product
-    from .forms import ShippingForm, PaymentForm
-    from .models import ShippingAddress, Order, OrderItem, DeliveryOption
 
+def checkout(request):
     cart = Cart(request)
     delivery_options = DeliveryOption.objects.filter(is_active=True)
     logger.debug(f"Delivery options fetched: {list(delivery_options.values('id', 'name', 'price'))}")
@@ -30,11 +38,20 @@ def checkout(request):
     try:
         cart_total_raw = cart.get_total_price() or 0
         logger.debug(f"Raw cart total: {cart_total_raw}")
-        # Ensure cart_total_raw is a string or number, and clean it
         if isinstance(cart_total_raw, str):
-            # Remove any invalid characters or multiple decimals
-            cart_total_raw = cart_total_raw.replace(',', '').split('.')[0] + '.' + ''.join(cart_total_raw.split('.')[1:])[:2]
-        cart_total = float(cart_total_raw)
+            cleaned_total = ''.join(char for char in cart_total_raw if char.isdigit() or char in ['.', '-'])
+            if cleaned_total.count('.') > 1:
+                logger.error(f"Invalid cart total format: multiple decimal points in '{cleaned_total}'")
+                raise ValueError("Invalid cart total format: multiple decimal points")
+            if not cleaned_total.replace('.', '').replace('-', '').isdigit():
+                logger.error(f"Invalid cart total format: non-numeric characters in '{cleaned_total}'")
+                raise ValueError("Invalid cart total format: non-numeric characters")
+            if cleaned_total in ['', '.', '-']:
+                logger.error(f"Invalid cart total format: empty or incomplete number '{cleaned_total}'")
+                raise ValueError("Invalid cart total format: empty or incomplete number")
+            cart_total = float(cleaned_total)
+        else:
+            cart_total = float(cart_total_raw)
     except (ValueError, TypeError) as e:
         logger.error(f"Error converting cart total: {str(e)}")
         return render(request, "payment/checkout.html", {
@@ -85,15 +102,30 @@ def checkout(request):
         product = product_dict.get(str(pid))
         if product:
             try:
+                price_raw = cart.cart[str(pid)]['price']
+                if isinstance(price_raw, str):
+                    cleaned_price = ''.join(char for char in price_raw if char.isdigit() or char in ['.', '-'])
+                    if cleaned_price.count('.') > 1:
+                        logger.error(f"Invalid price format for product ID {pid}: multiple decimal points in '{cleaned_price}'")
+                        raise ValueError(f"Invalid price format for product ID {pid}: multiple decimal points")
+                    if not cleaned_price.replace('.', '').replace('-', '').isdigit():
+                        logger.error(f"Invalid price format for product ID {pid}: non-numeric characters in '{cleaned_price}'")
+                        raise ValueError(f"Invalid price format for product ID {pid}: non-numeric characters")
+                    if cleaned_price in ['', '.', '-']:
+                        logger.error(f"Invalid price format for product ID {pid}: empty or incomplete number '{cleaned_price}'")
+                        raise ValueError(f"Invalid price format for product ID {pid}: empty or incomplete number")
+                    price = float(cleaned_price)
+                else:
+                    price = float(price_raw)
                 items.append({
                     'product': {
                         'id': pid,
                         'name': product.name,
-                        'price': float(cart.cart[str(pid)]['price']),
+                        'price': price,
                         'imageURL': product.imageURL
                     },
                     'quantity': cart.cart[str(pid)]['quantity'],
-                    'get_total': float(cart.cart[str(pid)]['price']) * cart.cart[str(pid)]['quantity']
+                    'get_total': price * cart.cart[str(pid)]['quantity']
                 })
             except (AttributeError, ValueError) as e:
                 logger.error(f"Error processing product ID {pid}: {e}")
@@ -117,14 +149,28 @@ def checkout(request):
     shipping_form = ShippingForm(request.POST or None)
     payment_form = PaymentForm(request.POST or None)
 
+    # Generate QR code for bank transfer if selected
+    qr_code = None
+    if request.POST.get('payment_method') == 'bank_transfer':
+        payment_data = f"Bank: Example Bank\nAccount: 1234567890\nAmount: ${order['grand_total']:.2f}"
+        qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
+        qr.add_data(payment_data)
+        qr.make(fit=True)
+        img = qr.make_image(fill_color="black", back_color="white")
+        buffered = BytesIO()
+        img.save(buffered, format="PNG")
+        qr_code = base64.b64encode(buffered.getvalue()).decode('utf-8')
+
     if request.method == 'POST' and shipping_form.is_valid() and payment_form.is_valid():
         try:
             # Save shipping address
             shipping_address = shipping_form.save(commit=False)
+            logger.debug(f"Saving shipping address for user: {request.user}")
             shipping_address.user = request.user
             shipping_address.save()
 
             # Create Order
+            logger.debug(f"Creating order with amount_paid: {order['grand_total']}")
             new_order = Order.objects.create(
                 user=request.user,
                 shipping_address=shipping_address,
@@ -138,15 +184,34 @@ def checkout(request):
             for product_id, item in cart.cart.items():
                 product = product_dict.get(product_id)
                 if product:
+                    price_raw = item['price']
+                    logger.debug(f"Processing OrderItem for product ID {product_id}, price: {price_raw}")
+                    if isinstance(price_raw, str):
+                        cleaned_price = ''.join(char for char in price_raw if char.isdigit() or char in ['.', '-'])
+                        if cleaned_price.count('.') > 1:
+                            logger.error(f"Invalid price format for OrderItem product ID {product_id}: multiple decimal points in '{cleaned_price}'")
+                            raise ValueError(f"Invalid price format for product ID {product_id}")
+                        if not cleaned_price.replace('.', '').replace('-', '').isdigit():
+                            logger.error(f"Invalid price format for OrderItem product ID {product_id}: non-numeric characters in '{cleaned_price}'")
+                            raise ValueError(f"Invalid price format for product ID {product_id}")
+                        if cleaned_price in ['', '.', '-']:
+                            logger.error(f"Invalid price format for OrderItem product ID {product_id}: empty or incomplete number '{cleaned_price}'")
+                            raise ValueError(f"Invalid price format for product ID {product_id}")
+                        price = float(cleaned_price)
+                    else:
+                        price = float(price_raw)
                     order_item = OrderItem.objects.create(
                         order=new_order,
                         product=product,
                         quantity=item['quantity'],
-                        price=item['price']
+                        price=price
                     )
                     order_items.append(order_item)
+                else:
+                    logger.error(f"Product ID {product_id} not found during OrderItem creation")
+                    raise ValueError(f"Product ID {product_id} not found")
 
-            # Clear cart by resetting the session cart
+            # Clear cart
             request.session['cart'] = {}
             request.session.modified = True
             logger.debug("Cart cleared by resetting session['cart']")
@@ -179,10 +244,12 @@ def checkout(request):
                 'estimated_days': selected_delivery.estimated_days
             }
             request.session['payment_method'] = new_order.get_payment_method_display()
+            logger.debug("Redirecting to payment_success")
             return redirect('payment_success')
 
         except Exception as e:
             logger.error(f"Error processing order: {str(e)}")
+            messages.error(request, f"Error processing order: {str(e)}")
             return render(request, "payment/checkout.html", {
                 'order': order,
                 'items': items,
@@ -190,7 +257,7 @@ def checkout(request):
                 'selected_delivery_id': selected_delivery_id,
                 'shipping_form': shipping_form,
                 'payment_form': payment_form,
-                'error': f"Error processing order: {str(e)}"
+                'qr_code': qr_code
             })
 
     return render(request, "payment/checkout.html", {
@@ -199,9 +266,9 @@ def checkout(request):
         'delivery_options': delivery_options,
         'selected_delivery_id': selected_delivery_id,
         'shipping_form': shipping_form,
-        'payment_form': payment_form
+        'payment_form': payment_form,
+        'qr_code': qr_code
     })
-
 def payment_success(request):
     return render(request, "payment/payment_success.html", {
         'order_id': request.session.get('order_id', 'N/A'),
@@ -210,3 +277,8 @@ def payment_success(request):
         'delivery_option': request.session.get('delivery_option', {}),
         'payment_method': request.session.get('payment_method', 'N/A')
     })
+    
+def payment_view(request):
+    form = PaymentForm()
+    qr_code = form.get_qr_code() if request.POST.get('payment_method') == 'bank_transfer' else None
+    return render(request, 'payment/payment_form.html', {'form': form, 'qr_code': qr_code})
