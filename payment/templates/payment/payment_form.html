@@ -1,38 +1,78 @@
-{% extends 'store/main.html' %} {% block content %}
-    <style>
-        .qr-code-container {
-            display: none;
-            text-align: center;
-            margin-top: 1.5rem;
-        }
-        .qr-code-img {
-            max-width: 200px;
-            border: 1px solid #dee2e6;
-            border-radius: 0.25rem;
-        }
-    </style>
-    <div class="container mt-4">
-        <h3 class="mb-3 text-center">Select Payment Option</h3>
-        <form method="post" class="col-md-6 mx-auto">
-            {% csrf_token %}
-            <div class="mb-3">
-                {{ form.payment_method.label_tag }}
-                {{ form.payment_method }}
-            </div>
-            <div id="qrCodeContainer" class="qr-code-container">
-                <h5>Scan to Pay</h5>
-                <img id="qrCodeImage" src="data:image/png;base64,{{ qr_code }}" alt="Bank Transfer QR Code" class="qr-code-img">
-            </div>
-        </form>
-    </div>
-
-    <script>
-        function toggleQRCode() {
-            const paymentMethod = document.getElementById('paymentMethod').value;
-            const qrCodeContainer = document.getElementById('qrCodeContainer');
-            qrCodeContainer.style.display = paymentMethod === 'bank_transfer' ? 'block' : 'none';
-        }
-        document.addEventListener('DOMContentLoaded', toggleQRCode);
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-{% endblock %}
+<div class="wrapper-wellness-tb">
+  <table class="table table-bordered table-wellness mt-5" width="100%">
+    <tbody>
+      <tr>
+        <th colspan="2">
+          <strong class="text-center">Design Features</strong>
+        </th>
+      </tr>
+      <tr>
+        <td>
+          State-of-the-Art Exercise Equipment from LifeFitness - DISCOVER ST
+          CONSOLE series, experience integrated TV entertainment during your
+          workout.
+        </td>
+        <td>
+          Hammer Strength's - strength training equipment for intense workouts.
+        </td>
+      </tr>
+      <tr>
+        <td>LesMills® programmed class</td>
+        <td>State-of-the-art technology RPM® Room</td>
+      </tr>
+      <tr>
+        <td>
+          The Visbody R-Explorer - 3D avatar and body composition analysis.
+        </td>
+        <td>2-Olympic standard double fish table tennis</td>
+      </tr>
+      <tr>
+        <td>
+          SPARTANS Boxing franchise, specialized in Martial Art, boxing, safety
+          and discipline modalities.
+        </td>
+        <td>Warm, calm, soothing cozy Yoga &amp; Body Balance® studio</td>
+      </tr>
+      <tr>
+        <td>Functional Training Area</td>
+        <td>Consultation, goal setting &amp; social room</td>
+      </tr>
+      <tr>
+        <td>Hanging light with open ceiling</td>
+        <td>Pump station</td>
+      </tr>
+      <tr>
+        <th colspan="2"><strong class="text-center">Services</strong></th>
+      </tr>
+      <tr>
+        <td>Day passes and membership</td>
+        <td>Personal Training, booth camp, HIIT program</td>
+      </tr>
+      <tr>
+        <td>Group, scheduled fitness classes &amp; wellness workshop</td>
+        <td>Boxing &amp; Martial Art Championship event</td>
+      </tr>
+      <tr>
+        <td>Live DJ performance</td>
+        <td>Nutrition &amp; weight Management</td>
+      </tr>
+      <tr>
+        <td>Private Studio Room</td>
+        <td>Table Tennis</td>
+      </tr>
+      <tr>
+        <td>
+          Male &amp; Female Changing Room with thermal facilities, sauna, steam
+          room &amp; jacuzzi
+        </td>
+        <td>Individual Locker Room Services</td>
+      </tr>
+      <tr>
+        <td>Internet Café/ Juice Bar</td>
+        <td>
+          Sports Pro-shop (sale of sportswear, yoga attire &amp; merchandise)
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
