@@ -18,7 +18,7 @@ from io import BytesIO
 import base64
 logger = logging.getLogger(__name__)
 
-@login_required
+@login_required(login_url='/register/')
 
 def checkout(request):
     cart = Cart(request)
