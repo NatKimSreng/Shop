@@ -33,6 +33,7 @@ def checkout(request):
             defaults={'price': 5.00, 'estimated_days': 5, 'description': 'Standard delivery', 'is_active': True}
         )
         delivery_options = DeliveryOption.objects.filter(is_active=True)
+        
 
     # Calculate cart total without delivery
     try:

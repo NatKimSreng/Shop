@@ -39,10 +39,10 @@ class ProductForm(forms.ModelForm):
 def is_admin_or_superuser(user):
     return user.is_authenticated and (user.is_staff or user.is_superuser)
 
-@login_required(login_url='/accounts/login/')
-@user_passes_test(is_admin_or_superuser, login_url='/accounts/login/')
+@login_required(login_url='/login/')
+@user_passes_test(is_admin_or_superuser, login_url='/login/')
 def admin_dashboard(request):
-    target_brands = ['Oppo', 'ROG', 'Vivo', 'Samsung', 'Pixel', 'Iphone']
+    target_brands = ['Oppo', 'ROG', 'Vivo', 'Samsung', 'Pixel', 'iPhone']
     products = Product.objects.filter(category__name__in=target_brands)
     product_sales = []
     for product in products:
@@ -76,10 +76,10 @@ def admin_dashboard(request):
     }
     return render(request, 'admin_dashboard.html', context)
 
-@login_required(login_url='/accounts/login/')
-@user_passes_test(is_admin_or_superuser, login_url='/accounts/login/')
+@login_required(login_url='/login/')
+@user_passes_test(is_admin_or_superuser, login_url='/login/')
 def admin_order_list(request):
-    target_brands = ['Oppo', 'ROG', 'Vivo', 'Samsung', 'Pixel', 'Iphone']
+    target_brands = ['Oppo', 'ROG', 'Vivo', 'Samsung', 'Pixel', 'iPhone']
     orders = Order.objects.select_related('user', 'shipping_address', 'delivery_option').prefetch_related('orderitem_set__product')
     
     # Apply filters
@@ -99,8 +99,8 @@ def admin_order_list(request):
     }
     return render(request, 'admin_order.html', context)
 
-@login_required(login_url='/accounts/login/')
-@user_passes_test(is_admin_or_superuser, login_url='/accounts/login/')
+@login_required(login_url='/login/')
+@user_passes_test(is_admin_or_superuser, login_url='/login/')
 def admin_order_detail(request, order_id):
     order = get_object_or_404(Order.objects.select_related('user', 'shipping_address', 'delivery_option').prefetch_related('orderitem_set__product'), id=order_id)
     context = {
@@ -109,8 +109,8 @@ def admin_order_detail(request, order_id):
     }
     return render(request, 'admin_order_detail.html', context)
 
-@login_required(login_url='/accounts/login/')
-@user_passes_test(is_admin_or_superuser, login_url='/accounts/login/')
+@login_required(login_url='/login/')
+@user_passes_test(is_admin_or_superuser, login_url='/login/')
 def admin_order_update_status(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     if request.method == 'GET':
@@ -125,20 +125,20 @@ def admin_order_update_status(request, order_id):
             messages.error(request, 'Invalid status.')
     return redirect('admin_order_list')
 
-@login_required(login_url='/accounts/login/')
-@user_passes_test(is_admin_or_superuser, login_url='/accounts/login/')
+@login_required(login_url='/login/')
+@user_passes_test(is_admin_or_superuser, login_url='/login/')
 def admin_product_list(request):
     products = Product.objects.all()
     return render(request, 'admin_product_list.html', {'products': products})
 
-@login_required(login_url='/accounts/login/')
-@user_passes_test(is_admin_or_superuser, login_url='/accounts/login/')
+@login_required(login_url='/login/')
+@user_passes_test(is_admin_or_superuser, login_url='/login/')
 def admin_product(request):
     products = Product.objects.all()
     return render(request, 'admin_product.html', {'products': products})
 
-@login_required(login_url='/accounts/login/')
-@user_passes_test(is_admin_or_superuser, login_url='/accounts/login/')
+@login_required(login_url='/login/')
+@user_passes_test(is_admin_or_superuser, login_url='/login/')
 def add_product(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
@@ -152,8 +152,8 @@ def add_product(request):
         form = ProductForm()
     return render(request, 'admin_product_form.html', {'form': form, 'title': 'Add Product'})
 
-@login_required(login_url='/accounts/login/')
-@user_passes_test(is_admin_or_superuser, login_url='/accounts/login/')
+@login_required(login_url='/login/')
+@user_passes_test(is_admin_or_superuser, login_url='/login/')
 def edit_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
@@ -168,8 +168,8 @@ def edit_product(request, pk):
         form = ProductForm(instance=product)
     return render(request, 'admin_product_form.html', {'form': form, 'title': 'Edit Product', 'product': product})
 
-@login_required(login_url='/accounts/login/')
-@user_passes_test(is_admin_or_superuser, login_url='/accounts/login/')
+@login_required(login_url='/login/')
+@user_passes_test(is_admin_or_superuser, login_url='/login/')
 def delete_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':

@@ -209,6 +209,12 @@
                       </a>
                     </li>
                     <li>
+                     {% if user.is_staff or user.is_superuser %}
+                      <a class="dropdown-item" href="{% url 'admin_dashboard' %}">
+                        <i class="bi bi-shop me-2"></i>admin
+                      </a>
+                      {% endif %}
+                    <li>
                       <a class="dropdown-item" href="{% url 'logout' %}">
                         <i class="bi bi-box-arrow-right me-2"></i>Logout
                       </a>
