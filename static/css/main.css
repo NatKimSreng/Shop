@@ -688,3 +688,64 @@ h6 {
 .btn-outline-dark:hover {
   color: black;
 }
+/* Ensure the sidebar is fixed, vertical, and constrained in width */
+.sidebar {
+  width: 250px; /* Set a fixed width for the sidebar */
+  position: fixed;
+  top: 70px; /* Offset from the fixed navbar */
+  bottom: 0;
+  left: 0;
+  z-index: 100; /* Ensure sidebar is above content */
+  padding: 0;
+  background-color: #f8f9fa; /* Light background for visibility */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure sidebar content is scrollable */
+.sidebar-sticky {
+  position: relative;
+  top: 0;
+  height: calc(100vh - 70px); /* Full height minus navbar */
+  padding-top: 0.5rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable if content overflows */
+}
+
+/* Style for sidebar items */
+.list-group-item {
+  border: none;
+  padding: 0.75rem 1.25rem;
+  color: #333;
+}
+
+.list-group-item-action:hover {
+  background-color: #e9ecef;
+}
+
+.list-group-item.active {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Offset main content to avoid overlap with sidebar */
+main {
+  margin-left: 250px; /* Match sidebar width */
+  margin-top: 70px; /* Match navbar height */
+}
+
+/* Ensure navbar is full-width and fixed */
+.navbar.fixed-top {
+  z-index: 200; /* Above sidebar */
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+  .sidebar {
+    width: 100%; /* Full width on smaller screens */
+    top: 0; /* No offset when collapsed */
+    z-index: 300; /* Above content when toggled */
+  }
+  main {
+    margin-left: 0; /* No offset when sidebar is collapsed */
+  }
+}

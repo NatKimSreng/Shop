@@ -1,0 +1,78 @@
+{% extends 'sidebar.html' %} {% block content %}
+<div class="container py-4">
+  <h1 class="mb-4">Product List</h1>
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Price</th>
+              <th scope="col">Sale Price</th>
+              <th scope="col">In Stock</th>
+              <th scope="col">Image</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in products %}
+            <tr>
+              <td>{{ product.id }}</td>
+              <td>{{ product.name }}</td>
+              <td>${{ product.price|floatformat:2 }}</td>
+              <td>
+                {% if product.Is_sale %} ${{ product.Sale_price|floatformat:2 }}
+                {% else %} N/A {% endif %}
+              </td>
+              <td>
+                {% if product.Is_sale %}
+                <span class="badge bg-success">In Stock</span>
+                {% else %}
+                <span class="badge bg-danger">Out of Stock</span>
+                {% endif %}
+              </td>
+              <td>
+                <img
+                  src="{{ product.imageURL|default:'/static/images/placeholder.jpg' }}"
+                  alt="{{ product.name }}"
+                  style="width: 50px; height: 50px; object-fit: cover"
+                />
+              </td>
+              <td>
+                <a class="btn btn-sm btn-outline-primary">Edit</a>
+                <a
+                  class="btn btn-sm btn-outline-danger"
+                  onclick="return confirm('Are you sure you want to delete {{ product.name }}?');"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="7" class="text-center">No products available.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom CSS for styling -->
+<style>
+  .table th,
+  .table td {
+    vertical-align: middle;
+  }
+  .table img {
+    border-radius: 4px;
+  }
+  .card {
+    border: none;
+    border-radius: 8px;
+  }
+</style>
+{% endblock content %}
