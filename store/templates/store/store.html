@@ -4,15 +4,10 @@
   <div class="row g-4">
     {% for product in products %}
     <div class="col-md-6 col-lg-4">
-      <div
-        class="card h-100 shadow-sm border-0 rounded-3 product-card transition-all"
-      >
+      <div class="card h-100 shadow-sm border-0 rounded-3 product-card transition-all">
         <!-- Sale badge -->
         {% if product.Is_sale %}
-        <div
-          class="badge bg-danger text-white position-absolute px-3 py-2 rounded-pill"
-          style="top: 1rem; right: 1rem; z-index: 1"
-        >
+        <div class="badge bg-danger text-white position-absolute px-3 py-2 rounded-pill" style="top: 1rem; right: 1rem; z-index: 1">
           SALE
         </div>
         {% endif %}
@@ -21,24 +16,16 @@
         <div class="overflow-hidden rounded-top position-relative">
           <img
             class="card-img-top product-img"
-            src="{{ product.imageURL|default:'/static/images/placeholder.jpg' }}"
+            src="{% if product.image %}{{ product.image.url }}{% else %}/static/images/placeholder.jpg{% endif %}"
             alt="{{ product.name }}"
-            style="
-              object-fit: cover;
-              height: 220px;
-              transition: transform 0.3s ease;
-            "
+            style="object-fit: cover; height: 220px; transition: transform 0.3s ease;"
             onmouseover="this.style.transform='scale(1.05)'"
             onmouseout="this.style.transform='scale(1)'"
           />
           <!-- Out of stock overlay -->
           {% if not product.Is_sale %}
-          <div
-            class="out-of-stock-overlay d-flex align-items-center justify-content-center position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"
-          >
-            <span class="out-of-stock-text text-white fw-bold"
-              >Out of Stock</span
-            >
+          <div class="out-of-stock-overlay d-flex align-items-center justify-content-center position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50">
+            <span class="out-of-stock-text text-white fw-bold">Out of Stock</span>
           </div>
           {% endif %}
         </div>
@@ -51,14 +38,10 @@
 
             <!-- Sale indicator with stars for sale items -->
             {% if product.Is_sale %}
-            <div
-              class="d-flex justify-content-center align-items-center small text-warning mb-3"
-            >
+            <div class="d-flex justify-content-center align-items-center small text-warning mb-3">
               <i class="bi bi-star-fill"></i>
               <i class="bi bi-star-fill mx-1"></i>
-              <span class="badge bg-warning text-dark mx-2 px-2 py-1"
-                >Special Offer</span
-              >
+              <span class="badge bg-warning text-dark mx-2 px-2 py-1">Special Offer</span>
               <i class="bi bi-star-fill mx-1"></i>
               <i class="bi bi-star-fill"></i>
             </div>
@@ -67,9 +50,7 @@
             <!-- Product price -->
             {% if product.Is_sale %}
             <div class="mb-3">
-              <span class="text-muted text-decoration-line-through me-2"
-                >${{ product.Sale_price }}</span
-              >
+              <span class="text-muted text-decoration-line-through me-2">${{ product.Sale_price }}</span>
               <span class="fw-bold text-danger fs-5">${{ product.price }}</span>
             </div>
             {% else %}
@@ -84,28 +65,15 @@
         <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
           <div class="text-center d-flex justify-content-center gap-2">
             {% if product.Is_sale %}
-            <button
-              type="button"
-              value="{{ product.id }}"
-              class="btn btn-outline-primary rounded-pill px-4 py-2 add-cart"
-              data-product-id="{{ product.id }}"
-            >
+            <button type="button" value="{{ product.id }}" class="btn btn-outline-primary rounded-pill px-4 py-2 add-cart" data-product-id="{{ product.id }}">
               Add to Cart
             </button>
             {% else %}
-            <button
-              type="button"
-              class="btn btn-outline-dark rounded-pill px-4 py-2"
-              disabled
-              aria-disabled="true"
-            >
+            <button type="button" class="btn btn-outline-dark rounded-pill px-4 py-2" disabled aria-disabled="true">
               Out of Stock
             </button>
             {% endif %}
-            <a
-              class="btn btn-outline-primary rounded-pill px-4 py-2"
-              href="{% url 'product' product.id %}"
-            >
+            <a class="btn btn-outline-primary rounded-pill px-4 py-2" href="{% url 'product' product.id %}">
               View Details
             </a>
           </div>

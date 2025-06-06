@@ -1,83 +1,124 @@
-{% extends 'sidebar.html' %} {% load static %} {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
-      <h1>Dashboard</h1>
-      <p>Welcome to the admin dashboard!</p>
-      <div id="main" style="width: 100%; height: 400px"></div>
+{% extends 'sidebar.html' %}
+{% load static template_tags %}
+{% block content %}
+<div class="container py-4">
+  <h1 class="mb-4">Admin Dashboard</h1>
+  {% if messages %}
+    <div class="mb-3">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+  
+  <!-- Navigation -->
+  <div class="mb-4">
+    <a href="{% url 'admin_order_list' %}" class="btn btn-primary">View All Orders</a>
+    <a href="{% url 'admin_product_list' %}" class="btn btn-secondary">Manage Products</a>
+  </div>
+  
+  <!-- Product Prices and Sales Table -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Product Prices and Sales</h5>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Brand/Category</th>
+              <th>Product Name</th>
+              <th>Price</th>
+              <th>Sale Price</th>
+              <th>In Stock</th>
+              <th>Amount Paid</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in product_sales %}
+            <tr>
+              <td>{{ item.category }}</td>
+              <td>{{ item.product.name }}</td>
+              <td>${{ item.price|floatformat:2 }}</td>
+              <td>${{ item.sale_price|floatformat:2 }}</td>
+              <td>
+                {% if item.is_sale %}
+                <span class="badge bg-success">In Stock</span>
+                {% else %}
+                <span class="badge bg-danger">Out of Stock</span>
+                {% endif %}
+              </td>
+              <td>${{ item.amount_paid|floatformat:2 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="text-center">No products found for selected brands.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sales by Brand Chart -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Total Sales by Brand</h5>
+    </div>
+    <div class="card-body">
+      <canvas id="salesChart" style="max-height: 400px;"></canvas>
     </div>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.min.js"></script>
 <script>
-  var option = {
-    title: { text: "Stacked Area Chart" },
-    tooltip: {
-      trigger: "axis",
-      axisPointer: { type: "cross", label: { backgroundColor: "#6a7985" } },
+  const ctx = document.getElementById('salesChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: {{ target_brands|safe }},
+      datasets: [{
+        label: 'Total Sales ($)',
+        data: [
+          {% for brand in target_brands %}
+          {{ sales_by_brand|get_item:brand|default:0 }},
+          {% endfor %}
+        ],
+        backgroundColor: [
+          '#0d6efd', '#6c757d', '#198754', '#dc3545', '#ffc107', '#0dcaf0'
+        ],
+        borderColor: '#ffffff',
+        borderWidth: 1
+      }]
     },
-    legend: {
-      data: ["Email", "Union Ads", "Video Ads", "Direct", "Search Engine"],
-    },
-    toolbox: { feature: { saveAsImage: {} } },
-    grid: { left: "3%", right: "4%", bottom: "3%", containLabel: true },
-    xAxis: [
-      {
-        type: "category",
-        boundaryGap: false,
-        data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        title: { display: true, text: 'Sales by Brand' }
       },
-    ],
-    yAxis: [{ type: "value" }],
-    series: [
-      {
-        name: "Email",
-        type: "line",
-        stack: "Total",
-        areaStyle: {},
-        emphasis: { focus: "series" },
-        data: [120, 132, 101, 134, 90, 230, 210],
-      },
-      {
-        name: "Union Ads",
-        type: "line",
-        stack: "Total",
-        areaStyle: {},
-        emphasis: { focus: "series" },
-        data: [220, 182, 191, 234, 290, 330, 310],
-      },
-      {
-        name: "Video Ads",
-        type: "line",
-        stack: "Total",
-        areaStyle: {},
-        emphasis: { focus: "series" },
-        data: [150, 232, 201, 154, 190, 330, 410],
-      },
-      {
-        name: "Direct",
-        type: "line",
-        stack: "Total",
-        areaStyle: {},
-        emphasis: { focus: "series" },
-        data: [320, 332, 301, 334, 390, 330, 320],
-      },
-      {
-        name: "Search Engine",
-        type: "line",
-        stack: "Total",
-        label: { show: true, position: "top" },
-        areaStyle: {},
-        emphasis: { focus: "series" },
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
-      },
-    ],
-  };
-  var chartDom = document.getElementById("main");
-  var myChart = echarts.init(chartDom);
-  myChart.setOption(option);
-  window.addEventListener("resize", function () {
-    myChart.resize();
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Total Sales ($)' }
+        }
+      }
+    }
   });
 </script>
+
+<style>
+  .card { border: none; border-radius: 8px; }
+  .table th, .table td { vertical-align: middle; }
+  .alert { border-radius: 4px; }
+</style>
 {% endblock content %}
