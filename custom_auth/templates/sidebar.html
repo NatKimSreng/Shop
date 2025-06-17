@@ -48,10 +48,10 @@
               ><span>Order</span>
             </a>
             <a
-              href=""
+              href="{% url 'admin_user_list'%}"
               class="list-group-item list-group-item-action py-2 ripple {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
             >
-              <i class="fas fa-lock fa-fw me-2"></i><span>Login</span>
+              <i class="fas fa-lock fa-fw me-2"></i><span>Admin Management</span>
             </a>
             <a
               href=""

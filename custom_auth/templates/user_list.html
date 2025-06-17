@@ -1,0 +1,129 @@
+{% extends 'sidebar.html' %}
+{% block content %}
+<style>
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.loading-spinner {
+    display: none;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+</style>
+<div class="container">
+    <h1>User Management</h1>
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary mb-3">Back to Dashboard</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Active</th>
+                <th>Staff</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.is_active|yesno:"Yes,No" }}</td>
+                <td>{{ user.is_staff|yesno:"Yes,No" }}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ user.pk }}">Edit</button>
+                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ user.pk }}">Delete</button>
+                </td>
+            </tr>
+            <!-- Edit Modal -->
+            <div class="modal fade" id="editModal{{ user.pk }}" tabindex="-1" aria-labelledby="editModalLabel{{ user.pk }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editModalLabel{{ user.pk }}">Edit User: {{ user.username }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editForm{{ user.pk }}" method="post" action="{% url 'admin_user_edit' user.pk %}">
+                                {% csrf_token %}
+                                <div class="form-group mb-3">
+                                    <label for="username{{ user.pk }}">Username</label>
+                                    <input type="text" class="form-control" id="username{{ user.pk }}" name="username" value="{{ user.username }}" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="email{{ user.pk }}">Email</label>
+                                    <input type="email" class="form-control" id="email{{ user.pk }}" name="email" value="{{ user.email }}" required>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="is_active{{ user.pk }}" name="is_active" {% if user.is_active %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_active{{ user.pk }}">Active</label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="is_staff{{ user.pk }}" name="is_staff" {% if user.is_staff %}checked{% endif %}>
+                                    <label class="form-check-label" for="is_staff{{ user.pk }}">Staff Status</label>
+                                </div>
+                                <div class="position-relative">
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    <div id="spinner{{ user.pk }}" class="loading-spinner"></div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Delete Modal -->
+            <div class="modal fade" id="deleteModal{{ user.pk }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ user.pk }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel{{ user.pk }}">Delete User: {{ user.username }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete the user "{{ user.username }}"?</p>
+                            <form id="deleteForm{{ user.pk }}" method="post" action="{% url 'admin_user_delete' user.pk %}">
+                                {% csrf_token %}
+                                <div class="position-relative">
+                                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                                    <div id="deleteSpinner{{ user.pk }}" class="loading-spinner"></div>
+                                </div>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <tr>
+                <td colspan="5">No users found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+document.querySelectorAll('form[id^="editForm"]').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        const spinner = this.querySelector('.loading-spinner');
+        spinner.style.display = 'block';
+        this.querySelector('button[type="submit"]').disabled = true;
+    });
+});
+document.querySelectorAll('form[id^="deleteForm"]').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        const spinner = this.querySelector('.loading-spinner');
+        spinner.style.display = 'block';
+        this.querySelector('button[type="submit"]').disabled = true;
+    });
+});
+</script>
+{% endblock content %}

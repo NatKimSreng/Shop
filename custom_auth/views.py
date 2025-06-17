@@ -7,7 +7,7 @@ from django import forms
 from django.db.models import Sum, Q
 from django.utils import timezone
 from django.views.decorators.http import require_POST
-
+from django.contrib.auth.models import User
 # Custom form for adding/editing products
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -194,3 +194,43 @@ def delete_product(request, pk):
         messages.success(request, 'Product deleted successfully!')
         return redirect('admin_product_list')
     return render(request, 'admin_product_confirm_delete.html', {'product': product})
+
+def is_admin(user):
+    return user.is_superuser
+
+@login_required
+@user_passes_test(is_admin)
+def admin_user_list(request):
+    users = User.objects.all()
+    return render(request, 'user_list.html', {'users': users})
+
+@login_required
+@user_passes_test(is_admin)
+def admin_user_edit(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        is_active = request.POST.get('is_active') == 'on'
+        is_staff = request.POST.get('is_staff') == 'on'
+        
+        user.username = username
+        user.email = email
+        user.is_active = is_active
+        user.is_staff = is_staff
+        user.save()
+        
+        messages.success(request, 'User updated successfully')
+        return redirect('admin_user_list')
+    
+    return render(request, 'user_edit.html', {'user': user})
+
+@login_required
+@user_passes_test(is_admin)
+def admin_user_delete(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, 'User deleted successfully')
+        return redirect('admin_user_list')
+    return render(request, 'user_delete.html', {'user': user})
