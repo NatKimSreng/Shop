@@ -85,6 +85,7 @@ def admin_dashboard(request):
 def admin_order_list(request):
     target_brands = ['Oppo', 'ROG', 'Vivo', 'Samsung', 'Pixel', 'iPhone']
     orders = Order.objects.select_related('user', 'shipping_address', 'delivery_option').prefetch_related('orderitem_set__product')
+    orders = Order.objects.all().order_by('-id')
     
     # Apply filters
     selected_brand = request.GET.get('brand', '')
