@@ -6,8 +6,11 @@ from django.contrib import messages
 from django import forms
 from django.db.models import Sum, Q
 from django.utils import timezone
+from django.utils.timezone import now
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
+from datetime import timedelta
+
 # Custom form for adding/editing products
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -86,41 +89,62 @@ def admin_order_list(request):
     # Apply filters
     selected_brand = request.GET.get('brand', '')
     selected_status = request.GET.get('status', '')
-    
+    selected_payment = request.GET.get('payment', '')
+    selected_date = request.GET.get('date', '')
+
     if selected_brand:
         orders = orders.filter(orderitem__product__category__name=selected_brand)
     if selected_status:
         orders = orders.filter(status=selected_status)
-    
+    if selected_payment:
+        orders = orders.filter(payment_method=selected_payment)
+    if selected_date:
+        now = timezone.now()
+        if selected_date == 'today':
+            orders = orders.filter(date_ordered__date=now.date())
+        elif selected_date == 'past_7_days':
+            orders = orders.filter(date_ordered__gte=now - timedelta(days=7))
+        elif selected_date == 'this_month':
+            orders = orders.filter(date_ordered__year=now.year, date_ordered__month=now.month)
+        elif selected_date == 'this_year':
+            orders = orders.filter(date_ordered__year=now.year)
+
     context = {
         'orders': orders,
         'target_brands': target_brands,
         'selected_brand': selected_brand,
         'selected_status': selected_status,
+        'selected_payment': selected_payment,
+        'selected_date': selected_date,
     }
     return render(request, 'admin_order.html', context)
 
 @login_required(login_url='/login/')
 @user_passes_test(is_admin_or_superuser, login_url='/login/')
 def admin_order_detail(request, order_id):
-    order = get_object_or_404(Order.objects.select_related('user', 'shipping_address', 'delivery_option').prefetch_related('orderitem_set__product'), id=order_id)
+    order = get_object_or_404(
+        Order.objects.select_related('user', 'shipping_address', 'delivery_option').prefetch_related('orderitem_set__product'),
+        id=order_id
+    )
+    if request.method == 'POST':
+        status = request.POST.get('status')
+        valid_statuses = ['PENDING', 'SHIPPED', 'DELIVERED', 'CANCELLED']
+        if not status:
+            messages.error(request, 'Status parameter is missing.')
+            return redirect('admin_order_detail', order_id=order_id)
+        if status in valid_statuses:
+            order.status = status
+            if status == 'SHIPPED':
+                order.date_shipped = timezone.now()
+            order.save()
+            messages.success(request, f'Order {order.id} status updated to {status}.')
+            return redirect('admin_order_detail', order_id=order_id)
+        else:
+            messages.error(request, f'Invalid status: {status}.')
     context = {
         'order': order,
         'items': order.orderitem_set.all(),
     }
-    order = get_object_or_404(Order, id=order_id)
-    status = request.POST.get('status')
-    if not status:
-        messages.error(request, 'Status parameter is missing.')
-        return redirect('admin_order_list')
-    if status in ['SHIPPED', 'DELIVERED', 'CANCELLED']:
-        order.status = status
-        if status == 'SHIPPED':
-            order.date_shipped = timezone.now()
-        order.save()
-        messages.success(request, f'Order {order.id} status updated to {status}.')
-    else:
-        messages.error(request, 'Invalid status.')
     return render(request, 'admin_order_detail.html', context)
 
 @login_required(login_url='/login/')
@@ -129,18 +153,19 @@ def admin_order_detail(request, order_id):
 def admin_order_update_status(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     status = request.POST.get('status')
+    valid_statuses = ['PENDING', 'SHIPPED', 'DELIVERED', 'CANCELLED']
     if not status:
         messages.error(request, 'Status parameter is missing.')
         return redirect('admin_order_list')
-    if status in ['SHIPPED', 'DELIVERED', 'CANCELLED']:
+    if status in valid_statuses:
         order.status = status
         if status == 'SHIPPED':
             order.date_shipped = timezone.now()
         order.save()
         messages.success(request, f'Order {order.id} status updated to {status}.')
     else:
-        messages.error(request, 'Invalid status.')
-    return redirect('admin_order_list')
+        messages.error(request, f'Invalid status: {status}.')
+    return redirect('admin_order_detail')
 
 @login_required(login_url='/login/')
 @user_passes_test(is_admin_or_superuser, login_url='/login/')
@@ -199,13 +224,13 @@ def is_admin(user):
     return user.is_superuser
 
 @login_required
-@user_passes_test(is_admin)
+@user_passes_test(is_admin, login_url='/login/')
 def admin_user_list(request):
     users = User.objects.all()
     return render(request, 'user_list.html', {'users': users})
 
 @login_required
-@user_passes_test(is_admin)
+@user_passes_test(is_admin, login_url='/login/')
 def admin_user_edit(request, pk):
     user = get_object_or_404(User, pk=pk)
     if request.method == 'POST':
@@ -226,7 +251,7 @@ def admin_user_edit(request, pk):
     return render(request, 'user_edit.html', {'user': user})
 
 @login_required
-@user_passes_test(is_admin)
+@user_passes_test(is_admin, login_url='/login/')
 def admin_user_delete(request, pk):
     user = get_object_or_404(User, pk=pk)
     if request.method == 'POST':

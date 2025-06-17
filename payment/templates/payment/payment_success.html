@@ -1,60 +1,90 @@
-{% extends 'store/main.html' %} {% block content %}
-<div class="container mt-5">
-  <h1>Order Confirmed</h1>
-  <div class="alert alert-success">
-    Thank you for your purchase! Your order has been successfully placed.
+{% extends 'store/main.html' %}
+{% block content %}
+<div class="container py-5">
+  <div class="text-center mb-4">
+    <h1 class="display-5 fw-bold text-success">
+      <i class="bi bi-check-circle-fill"></i> Order Confirmed
+    </h1>
+    <p class="lead">Thank you for your purchase! Your order has been successfully placed.</p>
   </div>
 
-  <h3>Order Details</h3>
-  <p><strong>Order ID:</strong> {{ order_id }}</p>
+  <div class="row">
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h4 class="mb-0">Order Details</h4>
+        </div>
+        <div class="card-body">
+          <p><strong>Order ID:</strong> {{ order_id }}</p>
 
-  <h4>Shipping Address</h4>
-  <p>
-    {{ shipping_address.full_name }}<br />
-    {{ shipping_address.address1 }}<br />
-    {% if shipping_address.address2 %} {{ shipping_address.address2 }}<br />
-    {% endif %} {{ shipping_address.city }}{% if shipping_address.state %}, {{
-    shipping_address.state }}{% endif %} {{ shipping_address.zipcode }}<br />
-    {{ shipping_address.country }}<br />
-    <strong>Email:</strong> {{ shipping_address.email }}
-  </p>
+          <h5 class="mt-4">Shipping Address</h5>
+          <p class="mb-1">{{ shipping_address.full_name }}</p>
+          <p class="mb-1">{{ shipping_address.address1 }}</p>
+          {% if shipping_address.address2 %}
+          <p class="mb-1">{{ shipping_address.address2 }}</p>
+          {% endif %}
+          <p class="mb-1">{{ shipping_address.city }}, {{ shipping_address.zipcode }}</p>
+          <p class="mb-1">{{ shipping_address.country }}</p>
+          <p><strong>Email:</strong> {{ shipping_address.email }}</p>
+        </div>
+      </div>
+    </div>
 
-  <h4>Delivery Option</h4>
-  <p>
-    {{ delivery_option.name }} - ${{ delivery_option.price|floatformat:2 }}<br />
-    Estimated Delivery: {{ delivery_option.estimated_days }} day{% if
-    delivery_option.estimated_days != 1 %}
-  </p>
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-header bg-light">
+          <h4 class="mb-0">Delivery & Payment</h4>
+        </div>
+        <div class="card-body">
+          <h5 class="mt-2">Delivery Option</h5>
+          <p>{{ delivery_option.name }} - ${{ delivery_option.price|floatformat:2 }}</p>
+          <p>Estimated Delivery: {{ delivery_option.estimated_days }} day{% if delivery_option.estimated_days != 1 %}s{% endif %}</p>
 
-  <h4>Payment Method</h4>
-  <p>{{ payment_method }}</p>
+          <h5 class="mt-4">Payment Method</h5>
+          <p>{{ payment_method }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <h4>Order Items</h4>
-  {% if order_items %}
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Product</th>
-        <th>Price</th>
-        <th>Quantity</th>
-        <th>Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in order_items %}
-      <tr>
-        <td>{{ item.product_name }}</td>
-        <td>${{ item.price|floatformat:2 }}</td>
-        <td>{{ item.quantity }}</td>
-        <td>${{ item.total|floatformat:2 }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p>No items in this order.</p>
-  {% endif %}
+  <div class="card shadow-sm mb-5">
+    <div class="card-header bg-light">
+      <h4 class="mb-0">Order Items</h4>
+    </div>
+    <div class="card-body">
+      {% if order_items %}
+      <div class="table-responsive">
+        <table class="table table-bordered align-middle text-center">
+          <thead class="table-secondary">
+            <tr>
+              <th>Product</th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order_items %}
+            <tr>
+              <td>{{ item.product_name }}</td>
+              <td>${{ item.price|floatformat:2 }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>${{ item.total|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="text-muted">No items in this order.</p>
+      {% endif %}
+    </div>
+  </div>
 
-  <a href="{% url 'home' %}" class="btn btn-primary mt-4">Continue Shopping</a>
+  <div class="text-center">
+    <a href="{% url 'home' %}" class="btn btn-outline-primary btn-lg">
+      <i class="bi bi-shop"></i> Continue Shopping
+    </a>
+  </div>
 </div>
 {% endblock %}
