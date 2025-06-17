@@ -6,6 +6,7 @@ from django.contrib import messages
 from django import forms
 from django.db.models import Sum, Q
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 # Custom form for adding/editing products
 class ProductForm(forms.ModelForm):
@@ -107,22 +108,38 @@ def admin_order_detail(request, order_id):
         'order': order,
         'items': order.orderitem_set.all(),
     }
+    order = get_object_or_404(Order, id=order_id)
+    status = request.POST.get('status')
+    if not status:
+        messages.error(request, 'Status parameter is missing.')
+        return redirect('admin_order_list')
+    if status in ['SHIPPED', 'DELIVERED', 'CANCELLED']:
+        order.status = status
+        if status == 'SHIPPED':
+            order.date_shipped = timezone.now()
+        order.save()
+        messages.success(request, f'Order {order.id} status updated to {status}.')
+    else:
+        messages.error(request, 'Invalid status.')
     return render(request, 'admin_order_detail.html', context)
 
 @login_required(login_url='/login/')
 @user_passes_test(is_admin_or_superuser, login_url='/login/')
+@require_POST
 def admin_order_update_status(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    if request.method == 'GET':
-        status = request.GET.get('status')
-        if status in ['SHIPPED', 'DELIVERED', 'CANCELLED']:
-            order.status = status
-            if status == 'SHIPPED':
-                order.date_shipped = timezone.now()
-            order.save()
-            messages.success(request, f'Order {order.id} status updated to {status}.')
-        else:
-            messages.error(request, 'Invalid status.')
+    status = request.POST.get('status')
+    if not status:
+        messages.error(request, 'Status parameter is missing.')
+        return redirect('admin_order_list')
+    if status in ['SHIPPED', 'DELIVERED', 'CANCELLED']:
+        order.status = status
+        if status == 'SHIPPED':
+            order.date_shipped = timezone.now()
+        order.save()
+        messages.success(request, f'Order {order.id} status updated to {status}.')
+    else:
+        messages.error(request, 'Invalid status.')
     return redirect('admin_order_list')
 
 @login_required(login_url='/login/')
