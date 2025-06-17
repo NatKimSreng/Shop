@@ -165,7 +165,7 @@ def admin_order_update_status(request, order_id):
         messages.success(request, f'Order {order.id} status updated to {status}.')
     else:
         messages.error(request, f'Invalid status: {status}.')
-    return redirect('admin_order_detail')
+    return redirect('admin_order_detail', order_id=order_id)
 
 @login_required(login_url='/login/')
 @user_passes_test(is_admin_or_superuser, login_url='/login/')
