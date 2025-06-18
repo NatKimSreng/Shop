@@ -8,6 +8,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from .forms import SignUpForm, UpdateUserForm, ChangePasswordForm, UserInfoForm
 from django.db.models import Q
+from payment.views import *
 import json
 from payment.forms import ShippingForm
 from payment.models import ShippingAddress

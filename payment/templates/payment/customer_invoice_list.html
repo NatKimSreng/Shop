@@ -1,0 +1,257 @@
+{% extends 'store/main.html' %}{% load static %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-11">
+      <!-- Header -->
+      <div class="d-flex align-items-center mb-4">
+        <div class="bg-primary rounded-circle p-3 me-3">
+          <i class="fas fa-file-invoice-dollar text-white fa-lg"></i>
+        </div>
+        <div>
+          <h1 class="display-6 mb-0 text-primary fw-bold">Your Invoices</h1>
+          <p class="text-muted mb-0">Manage and view your order invoices</p>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      {% if messages %}
+      <div class="mb-4">
+        {% for message in messages %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+          <i class="fas fa-info-circle me-2"></i>{{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Email Search Form -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-search me-2"></i>Search Invoices
+          </h5>
+        </div>
+        <div class="card-body">
+          <form method="get" action="{% url 'customer_invoice_list' %}" class="row g-3">
+            <div class="col-md-8">
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-envelope text-primary"></i>
+                </span>
+                <input type="email" 
+                       name="email" 
+                       value="{{ email|default_if_none:'' }}" 
+                       placeholder="Enter your email address" 
+                       class="form-control form-control-lg" 
+                       required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <button type="submit" class="btn btn-primary btn-lg w-100">
+                <i class="fas fa-search me-2"></i>Search Invoices
+              </button>
+            </div>
+          </form>
+          
+          {% if email %}
+          <div class="mt-3">
+            <div class="alert alert-success mb-0">
+              <i class="fas fa-check-circle me-2"></i>
+              Showing invoices for: <strong>{{ email }}</strong>
+              <a href="{% url 'customer_invoice_list' %}" class="btn btn-sm btn-outline-success ms-2">
+                <i class="fas fa-times me-1"></i>Clear
+              </a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Invoices List -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">
+            <i class="fas fa-list-alt me-2"></i>Invoice List
+          </h5>
+          <span class="badge bg-light text-dark fs-6">
+            {{ orders|length }} invoice{{ orders|length|pluralize }}
+          </span>
+        </div>
+        <div class="card-body p-0">
+          {% if orders %}
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th class="border-0 fw-bold text-dark">
+                    <i class="fas fa-hashtag me-1"></i>Order ID
+                  </th>
+                  <th class="border-0 fw-bold text-dark">
+                    <i class="fas fa-user me-1"></i>Customer
+                  </th>
+                  <th class="border-0 fw-bold text-dark text-end">
+                    <i class="fas fa-dollar-sign me-1"></i>Amount
+                  </th>
+                  <th class="border-0 fw-bold text-dark text-center">
+                    <i class="fas fa-credit-card me-1"></i>Payment
+                  </th>
+                  <th class="border-0 fw-bold text-dark text-center">
+                    <i class="fas fa-info-circle me-1"></i>Status
+                  </th>
+                  <th class="border-0 fw-bold text-dark">
+                    <i class="fas fa-calendar me-1"></i>Date
+                  </th>
+                  <th class="border-0 fw-bold text-dark text-center">
+                    <i class="fas fa-cog me-1"></i>Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for order in orders %}
+                <tr class="align-middle">
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="bg-primary bg-opacity-10 rounded p-2 me-2">
+                        <i class="fas fa-receipt text-primary"></i>
+                      </div>
+                      <span class="fw-bold text-primary">#{{ order.id }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="bg-info bg-opacity-10 rounded-circle p-2 me-2">
+                        <i class="fas fa-user text-info"></i>
+                      </div>
+                      <div>
+                        {% if order.user %}
+                          <span class="fw-semibold">{{ order.user.username }}</span>
+                        {% elif order.shipping_address %}
+                          <span class="fw-semibold">{{ order.shipping_address.shipping_full_name }}</span>
+                        {% else %}
+                          <span class="text-muted fst-italic">N/A</span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-end">
+                    <span class="fw-bold text-success fs-5">${{ order.amount_paid|floatformat:2 }}</span>
+                  </td>
+                  <td class="text-center">
+                    {% if order.payment_method == 'cod' %}
+                      <span class="badge bg-warning text-dark">
+                        <i class="fas fa-truck me-1"></i>COD
+                      </span>
+                    {% elif order.payment_method == 'bank_transfer' %}
+                      <span class="badge bg-info">
+                        <i class="fas fa-university me-1"></i>Bank Transfer
+                      </span>
+                    {% else %}
+                      <span class="badge bg-secondary">{{ order.payment_method }}</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-center">
+                    <span class="badge bg-success fs-6">
+                      <i class="fas fa-check-circle me-1"></i>{{ order.get_status_display }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="text-nowrap">
+                      <div class="fw-semibold">{{ order.date_ordered|date:"M d, Y" }}</div>
+                      <small class="text-muted">{{ order.date_ordered|date:"g:i A" }}</small>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <div class="btn-group" role="group">
+                      <a href="{% url 'customer_invoice_detail' order.id %}" 
+                         class="btn btn-outline-primary btn-sm" 
+                         data-bs-toggle="tooltip" 
+                         title="View Invoice Details">
+                        <i class="fas fa-eye me-1"></i>View
+                      </a>
+                      <button type="button" 
+                              class="btn btn-outline-success btn-sm"
+                              data-bs-toggle="tooltip" 
+                              title="Download PDF">
+                        <i class="fas fa-download"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center py-5">
+            <div class="mb-4">
+              <i class="fas fa-inbox fa-4x text-muted"></i>
+            </div>
+            <h4 class="text-muted mb-2">No Invoices Found</h4>
+            <p class="text-muted mb-4">
+              {% if email %}
+                No invoices found for <strong>{{ email }}</strong>
+              {% else %}
+                Enter your email address to search for your invoices
+              {% endif %}
+            </p>
+            {% if email %}
+            <a href="{% url 'customer_invoice_list' %}" class="btn btn-primary">
+              <i class="fas fa-search me-2"></i>Search Again
+            </a>
+            {% endif %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Statistics Card (if there are orders) -->
+      {% if orders %}
+      <div class="row mt-4">
+        <div class="col-md-4">
+          <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+              <i class="fas fa-file-invoice fa-2x mb-2"></i>
+              <h4 class="fw-bold">{{ orders|length }}</h4>
+              <p class="mb-0">Total Invoice{{ orders|length|pluralize }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card bg-success text-white">
+            <div class="card-body text-center">
+              <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+              <h4 class="fw-bold">
+                ${% widthratio orders|length 1 orders.0.amount_paid %}
+              </h4>
+              <p class="mb-0">Total Spent</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card bg-info text-white">
+            <div class="card-body text-center">
+              <i class="fas fa-calendar fa-2x mb-2"></i>
+              <h4 class="fw-bold">{{ orders.0.date_ordered|date:"M Y" }}</h4>
+              <p class="mb-0">Latest Order</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Initialize tooltips -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+});
+</script>
+{% endblock content %}

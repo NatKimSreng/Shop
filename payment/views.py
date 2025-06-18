@@ -1,5 +1,5 @@
 # payment/views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 import logging
@@ -283,3 +283,44 @@ def payment_view(request):
     form = PaymentForm()
     qr_code = form.get_qr_code() if request.POST.get('payment_method') == 'bank_transfer' else None
     return render(request, 'payment/payment_form.html', {'form': form, 'qr_code': qr_code})
+@login_required(login_url='/register/')
+def customer_invoice_detail(request, order_id):
+    """
+    View to display detailed invoice information for a specific order.
+    Accessible only to the user who owns the order or via email match.
+    """
+    order = get_object_or_404(Order, id=order_id)
+    
+    # Security check: Ensure the order belongs to the logged-in user
+    if order.user != request.user and (not order.shipping_address or order.shipping_address.shipping_email != request.user.email):
+        messages.error(request, "You do not have permission to view this invoice.")
+        return redirect('customer_invoice_list')
+    
+    # Fetch order items
+    items = OrderItem.objects.filter(order=order).select_related('product')
+    
+    context = {
+        'order': order,
+        'items': items,
+    }
+    
+    return render(request, 'payment/customer_invoice_detail.html', context)
+@login_required(login_url='/register/')
+def customer_invoice_list(request):
+    email = request.GET.get('email')
+    orders = []
+
+    # Use logged-in user's email if no email is provided in GET request
+    if not email and request.user.is_authenticated:
+        email = request.user.email
+
+    if email:
+        orders = Order.objects.filter(shipping_address__shipping_email=email).select_related('shipping_address', 'delivery_option').prefetch_related('orderitem_set__product')
+        if not orders:
+            messages.info(request, 'No invoices found for this email address.')
+
+    context = {
+        'orders': orders,
+        'email': email
+    }
+    return render(request, 'payment/customer_invoice_list.html', context)
