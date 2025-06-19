@@ -22,9 +22,19 @@
 <div class="container py-4">
     <h1 class="mb-4">User Management</h1>
     <form method="get" class="row g-3 mb-3 align-items-end">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label for="search" class="form-label">Search</label>
             <input type="text" id="search" name="q" class="form-control" placeholder="Username or Email" value="{{ search_query }}">
+        </div>
+        <div class="col-md-2">
+            <label for="role" class="form-label">Role</label>
+            <select id="role" name="role" class="form-select">
+                <option value="">All Roles</option>
+                <option value="ADMIN" {% if role == 'ADMIN' %}selected{% endif %}>Admin</option>
+                <option value="MANAGER" {% if role == 'MANAGER' %}selected{% endif %}>Manager</option>
+                <option value="STAFF" {% if role == 'STAFF' %}selected{% endif %}>Staff</option>
+                <option value="CUSTOMER" {% if role == 'CUSTOMER' %}selected{% endif %}>Customer</option>
+            </select>
         </div>
         <div class="col-md-2">
             <label for="is_active" class="form-label">Active</label>
@@ -61,6 +71,7 @@
                         <th><input type="checkbox" id="select-all"></th>
                         <th>Username</th>
                         <th>Email</th>
+                        <th>Role</th>
                         <th>Active</th>
                         <th>Staff</th>
                         <th>Last Login</th>
@@ -74,6 +85,15 @@
                         <td><input type="checkbox" name="selected_users" value="{{ user.id }}"></td>
                         <td>{{ user.username }}</td>
                         <td>{{ user.email }}</td>
+                        <td>
+                            {% if user.profile %}
+                                <span class="badge {% if user.profile.role == 'ADMIN' %}bg-danger{% elif user.profile.role == 'MANAGER' %}bg-warning{% elif user.profile.role == 'STAFF' %}bg-info{% else %}bg-secondary{% endif %}">
+                                    {{ user.profile.get_role_display }}
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">Customer</span>
+                            {% endif %}
+                        </td>
                         <td>{% if user.is_active %}<span class="badge bg-success">Yes</span>{% else %}<span class="badge bg-danger">No</span>{% endif %}</td>
                         <td>{% if user.is_staff %}<span class="badge bg-primary">Yes</span>{% else %}<span class="badge bg-secondary">No</span>{% endif %}</td>
                         <td>{{ user.last_login|date:'Y-m-d H:i' }}</td>
@@ -84,7 +104,7 @@
                         </td>
                     </tr>
                     {% empty %}
-                    <tr><td colspan="8" class="text-center">No users found.</td></tr>
+                    <tr><td colspan="9" class="text-center">No users found.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>

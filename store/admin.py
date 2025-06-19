@@ -48,9 +48,10 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-	list_display = ['user', 'phone', 'city', 'country']
+	list_display = ['user', 'role', 'phone', 'city', 'country']
 	search_fields = ['user__username', 'user__email', 'phone']
-	list_filter = ['country', 'city']
+	list_filter = ['role', 'country', 'city']
+	ordering = ['user__username']
 
 class ProfileInline(admin.StackedInline):
 	model = Profile
@@ -60,9 +61,7 @@ class UserAdmin(admin.ModelAdmin):
 	model = User
 	field = ["username", "first_name", "last_name", "email"]
 	inlines = [ProfileInline]
- 
- 
-admin.site.unregister(User)
 
-# Re-Register the new way
+# Unregister the default User admin and register our custom one
+admin.site.unregister(User)
 admin.site.register(User, UserAdmin)

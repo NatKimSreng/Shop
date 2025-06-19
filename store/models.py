@@ -4,7 +4,15 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 
 class Profile(models.Model):
+    ROLE_CHOICES = [
+        ('ADMIN', 'Admin'),
+        ('MANAGER', 'Manager'),
+        ('STAFF', 'Staff'),
+        ('CUSTOMER', 'Customer'),
+    ]
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='CUSTOMER')
     date_modified = models.DateTimeField(User, auto_now=True)
     phone = models.CharField(max_length=20, blank=True)
     address1 = models.CharField(max_length=200, blank=True)
@@ -16,11 +24,11 @@ class Profile(models.Model):
     old_cart = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username} - {self.get_role_display()}"
 
 def create_profile(sender, instance, created, **kwargs):
     if created:
-        user_profile = Profile(user=instance)
+        user_profile = Profile(user=instance, role='CUSTOMER')
         user_profile.save()
 
 post_save.connect(create_profile, sender=User)
