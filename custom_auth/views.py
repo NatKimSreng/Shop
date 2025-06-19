@@ -136,6 +136,29 @@ def admin_dashboard(request):
         total_sales = brand_orders.aggregate(total=Sum('amount_paid'))['total'] or 0.0
         sales_by_brand[brand] = total_sales
 
+    # Top products (by sales amount)
+    top_products = sorted(product_sales, key=lambda x: x['amount_paid'], reverse=True)[:5]
+
+    # Recent orders (last 5)
+    recent_orders = orders.order_by('-date_ordered')[:5]
+
+    # Recent users (last 5)
+    recent_users = User.objects.order_by('-date_joined')[:5]
+
+    # Sales by category (pie chart)
+    categories = Category.objects.all()
+    sales_by_category = []
+    for cat in categories:
+        cat_orders = orders.filter(orderitem__product__category=cat, status__in=['SHIPPED', 'DELIVERED'])
+        total_sales = cat_orders.aggregate(total=Sum('amount_paid'))['total'] or 0.0
+        sales_by_category.append({'category': cat.name, 'total': total_sales})
+
+    # --- Dashboard summary stats ---
+    total_users = User.objects.count()
+    total_products = Product.objects.count()
+    total_orders = Order.objects.count()
+    total_sales = Order.objects.filter(status__in=['SHIPPED', 'DELIVERED']).aggregate(total=Sum('amount_paid'))['total'] or 0.0
+
     context = {
         'product_sales': product_sales,
         'sales_by_brand': sales_by_brand,
@@ -147,6 +170,14 @@ def admin_dashboard(request):
         'selected_brand': selected_brand,
         'selected_status': selected_status,
         'selected_date': selected_date,
+        'top_products': top_products,
+        'recent_orders': recent_orders,
+        'recent_users': recent_users,
+        'sales_by_category': sales_by_category,
+        'total_users': total_users,
+        'total_products': total_products,
+        'total_orders': total_orders,
+        'total_sales': total_sales,
     }
     return render(request, 'admin_dashboard.html', context)
 
