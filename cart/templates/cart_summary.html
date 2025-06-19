@@ -122,6 +122,12 @@
     transform: scale(0.95);
   }
 
+  .qty-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
   /* Info box styles */
   .info-box {
     background-color: #f8f9fa;
@@ -240,6 +246,65 @@
   a:hover {
     text-decoration: none;
   }
+
+  /* Stock status styles */
+  .stock-status {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+    margin-top: 5px;
+    display: inline-block;
+  }
+
+  .stock-in {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  .stock-low {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  .stock-out {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  .stock-warning {
+    background-color: #f8d7da;
+    color: #721c24;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    margin-top: 5px;
+    display: block;
+  }
+
+  .stock-details {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-top: 5px;
+    font-size: 11px;
+  }
+
+  .stock-details .row {
+    margin-bottom: 3px;
+  }
+
+  .stock-details .col-6 {
+    font-weight: 500;
+  }
+
+  .stock-details .col-6:first-child {
+    color: #6c757d;
+  }
+
+  .stock-details .col-6:last-child {
+    color: #212529;
+  }
 </style>
 
 <div class="row">
@@ -301,7 +366,42 @@
         <div style="flex: 2">
           <img class="row-image" src="{{item.product.imageURL}}" />
         </div>
-        <div style="flex: 2"><p>{{item.product.name}}</p></div>
+        <div style="flex: 2">
+          <p><strong>{{item.product.name}}</strong></p>
+          
+          <!-- Stock Status Badge -->
+          <div class="stock-status {% if item.product.quantity == 0 %}stock-out{% elif item.product.quantity <= 5 %}stock-low{% else %}stock-in{% endif %}">
+            <i class="bi {% if item.product.quantity == 0 %}bi-x-circle-fill{% elif item.product.quantity <= 5 %}bi-exclamation-triangle-fill{% else %}bi-check-circle-fill{% endif %} me-1"></i>
+            {% if item.product.quantity == 0 %}
+              Out of Stock
+            {% elif item.product.quantity <= 5 %}
+              Low Stock ({{ item.product.quantity }})
+            {% else %}
+              In Stock ({{ item.product.quantity }})
+            {% endif %}
+          </div>
+
+          <!-- Detailed Stock Information -->
+          <div class="stock-details">
+            <div class="row">
+              <div class="col-6">Available:</div>
+              <div class="col-6"><strong>{{ item.product.quantity }}</strong> units</div>
+            </div>
+            <div class="row">
+              <div class="col-6">In Cart:</div>
+              <div class="col-6"><strong>{{ item.quantity }}</strong> units</div>
+            </div>
+            {% if item.quantity > item.product.quantity %}
+            <div class="stock-warning">
+              ⚠️ Only {{ item.product.quantity }} available in stock
+            </div>
+            {% elif item.quantity == item.product.quantity %}
+            <div class="stock-warning">
+              ⚠️ Max quantity reached
+            </div>
+            {% endif %}
+          </div>
+        </div>
         <div style="flex: 1">
           <p class="item-price">${{item.product.price|floatformat:2}}</p>
         </div>
@@ -319,10 +419,14 @@
               class="qty-btn qty-btn-add update-cart"
               data-product-id="{{item.product.id}}"
               data-action="add"
+              {% if item.quantity >= item.product.quantity %}disabled{% endif %}
             >
               +
             </button>
           </div>
+          {% if item.quantity >= item.product.quantity %}
+          <small class="text-muted">Max quantity reached</small>
+          {% endif %}
         </div>
         <div style="flex: 1">
           <p class="item-total">${{item.get_total|floatformat:2}}</p>
@@ -363,4 +467,27 @@
     </div>
   </div>
 </div>
+
+<!-- Messages Display -->
+{% if messages %}
+<div class="container mt-3">
+  {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<script>
+  // Auto-hide alerts after 5 seconds
+  setTimeout(function() {
+    var alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+      var bsAlert = new bootstrap.Alert(alert);
+      bsAlert.close();
+    });
+  }, 5000);
+</script>
 {% endblock content %}

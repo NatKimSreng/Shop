@@ -891,4 +891,403 @@
     </div>
   </div>
 </section>
-{%endblock content%}
+
+<!-- Featured Products Section -->
+<section class="featured-products py-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center mb-5">
+        <h2 class="section-title">Featured Products</h2>
+        <p class="section-subtitle">Discover our most popular items</p>
+      </div>
+    </div>
+    
+    <div class="row g-4">
+      {% for product in products|slice:":6" %}
+      <div class="col-md-6 col-lg-4">
+        <div class="product-card h-100 shadow-sm border-0 rounded-3 transition-all">
+          <!-- Sale badge -->
+          {% if product.Is_sale %}
+          <div class="badge bg-danger text-white position-absolute px-3 py-2 rounded-pill" style="top: 1rem; right: 1rem; z-index: 1">
+            SALE
+          </div>
+          {% endif %}
+
+          <!-- Stock status badge -->
+          <div class="position-absolute px-3 py-2 rounded-pill" style="top: 1rem; left: 1rem; z-index: 1; 
+               {% if product.quantity == 0 %}background-color: #f8d7da; color: #721c24;{% elif product.quantity <= 5 %}background-color: #fff3cd; color: #856404;{% else %}background-color: #d4edda; color: #155724;{% endif %}">
+            {% if product.quantity == 0 %}
+              Out of Stock
+            {% elif product.quantity <= 5 %}
+              Low Stock ({{ product.quantity }})
+            {% else %}
+              In Stock ({{ product.quantity }})
+            {% endif %}
+          </div>
+
+          <!-- Product image -->
+          <div class="overflow-hidden rounded-top position-relative">
+            <img
+              class="card-img-top product-img"
+              src="{% if product.image %}{{ product.image.url }}{% else %}/static/images/placeholder.jpg{% endif %}"
+              alt="{{ product.name }}"
+              style="object-fit: cover; height: 220px; transition: transform 0.3s ease;"
+              onmouseover="this.style.transform='scale(1.05)'"
+              onmouseout="this.style.transform='scale(1)'"
+            />
+            <!-- Out of stock overlay -->
+            {% if not product.is_in_stock %}
+            <div class="out-of-stock-overlay d-flex align-items-center justify-content-center position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50">
+              <span class="out-of-stock-text text-white fw-bold">Out of Stock</span>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Product details -->
+          <div class="card-body p-4">
+            <div class="text-center">
+              <h5 class="fw-bolder mb-3">{{ product.name }}</h5>
+              
+              <!-- Stock Information -->
+              <div class="mb-3">
+                {% if product.quantity == 0 %}
+                  <div class="alert alert-danger py-2 px-3 mb-0">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Out of Stock</strong>
+                  </div>
+                {% elif product.quantity <= 5 %}
+                  <div class="alert alert-warning py-2 px-3 mb-0">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <strong>Low Stock:</strong> Only {{ product.quantity }} left!
+                  </div>
+                {% else %}
+                  <div class="alert alert-success py-2 px-3 mb-0">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <strong>In Stock:</strong> {{ product.quantity }} available
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Product price -->
+              {% if product.Is_sale %}
+              <div class="mb-3">
+                <span class="text-muted text-decoration-line-through me-2">${{ product.Sale_price }}</span>
+                <span class="fw-bold text-danger fs-5">${{ product.price }}</span>
+              </div>
+              {% else %}
+              <div class="mb-3">
+                <span class="fw-bold fs-5 text-muted">Out of Stock</span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Product actions -->
+          <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+            <div class="text-center d-flex justify-content-center gap-2">
+              {% if product.is_in_stock and product.Is_sale %}
+              <button type="button" value="{{ product.id }}" class="btn btn-outline-dark rounded-pill px-4 py-2 add-cart" data-product-id="{{ product.id }}">
+                Add to Cart
+              </button>
+              {% else %}
+              <button type="button" class="btn btn-outline-dark rounded-pill px-4 py-2" disabled aria-disabled="true">
+                {% if not product.is_in_stock %}Out of Stock{% else %}Unavailable{% endif %}
+              </button>
+              {% endif %}
+              <a class="btn btn-outline-dark rounded-pill px-4 py-2" href="{% url 'product' product.id %}">
+                View Details
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    
+    <div class="row mt-5">
+      <div class="col-12 text-center">
+        <a href="{% url 'store' %}" class="btn btn-primary btn-lg">View All Products</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section py-5 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center mb-5">
+        <h2 class="section-title">Shop by Category</h2>
+        <p class="section-subtitle">Find what you're looking for</p>
+      </div>
+    </div>
+    
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="category-card text-center p-4 bg-white rounded-3 shadow-sm">
+          <img src="{% static 'images/iphone_16.jpg' %}" alt="Smartphones" class="img-fluid rounded mb-3" style="height: 200px; object-fit: cover;">
+          <h4>Smartphones</h4>
+          <p class="text-muted">Latest mobile devices</p>
+          <a href="{% url 'store' %}" class="btn btn-outline-primary">Browse</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="category-card text-center p-4 bg-white rounded-3 shadow-sm">
+          <img src="{% static 'images/rog_1.jpg' %}" alt="Gaming" class="img-fluid rounded mb-3" style="height: 200px; object-fit: cover;">
+          <h4>Gaming</h4>
+          <p class="text-muted">High-performance gaming devices</p>
+          <a href="{% url 'store' %}" class="btn btn-outline-primary">Browse</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="category-card text-center p-4 bg-white rounded-3 shadow-sm">
+          <img src="{% static 'images/pixel_1.jpg' %}" alt="Accessories" class="img-fluid rounded mb-3" style="height: 200px; object-fit: cover;">
+          <h4>Accessories</h4>
+          <p class="text-muted">Essential tech accessories</p>
+          <a href="{% url 'store' %}" class="btn btn-outline-primary">Browse</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-3 text-center">
+        <div class="feature-item">
+          <i class="bi bi-truck fs-1 text-primary mb-3"></i>
+          <h5>Free Shipping</h5>
+          <p class="text-muted">On orders over $50</p>
+        </div>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="feature-item">
+          <i class="bi bi-shield-check fs-1 text-primary mb-3"></i>
+          <h5>Secure Payment</h5>
+          <p class="text-muted">100% secure checkout</p>
+        </div>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="feature-item">
+          <i class="bi bi-arrow-clockwise fs-1 text-primary mb-3"></i>
+          <h5>Easy Returns</h5>
+          <p class="text-muted">30-day return policy</p>
+        </div>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="feature-item">
+          <i class="bi bi-headset fs-1 text-primary mb-3"></i>
+          <h5>24/7 Support</h5>
+          <p class="text-muted">Always here to help</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Hero Section Styles */
+  .hero-section {
+    height: 500px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-slider {
+    height: 100%;
+    position: relative;
+  }
+
+  .hero-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+  }
+
+  .hero-slide.active {
+    opacity: 1;
+  }
+
+  .hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    z-index: 2;
+  }
+
+  .hero-title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  .hero-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 1rem;
+    cursor: pointer;
+    font-size: 1.5rem;
+    z-index: 3;
+  }
+
+  .hero-nav.prev {
+    left: 1rem;
+  }
+
+  .hero-nav.next {
+    right: 1rem;
+  }
+
+  .hero-dots {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+  }
+
+  .dot {
+    height: 12px;
+    width: 12px;
+    margin: 0 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .dot.active {
+    background-color: white;
+  }
+
+  /* Section Styles */
+  .section-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+
+  .section-subtitle {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 3rem;
+  }
+
+  /* Product Card Styles */
+  .product-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .transition-all {
+    transition: all 0.3s ease;
+  }
+
+  .out-of-stock-overlay {
+    transition: opacity 0.3s ease;
+  }
+
+  .product-card:hover .out-of-stock-overlay {
+    opacity: 0.8;
+  }
+
+  .alert {
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+  }
+
+  .alert i {
+    font-size: 1rem;
+  }
+
+  /* Category Card Styles */
+  .category-card {
+    transition: transform 0.3s ease;
+  }
+
+  .category-card:hover {
+    transform: translateY(-5px);
+  }
+
+  /* Feature Item Styles */
+  .feature-item {
+    padding: 2rem 1rem;
+  }
+
+  .feature-item:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+  }
+</style>
+
+<script>
+  let slideIndex = 1;
+  showSlides(slideIndex);
+
+  function changeSlide(n) {
+    showSlides(slideIndex += n);
+  }
+
+  function currentSlide(n) {
+    showSlides(slideIndex = n);
+  }
+
+  function showSlides(n) {
+    let i;
+    let slides = document.getElementsByClassName("hero-slide");
+    let dots = document.getElementsByClassName("dot");
+    
+    if (n > slides.length) {slideIndex = 1}
+    if (n < 1) {slideIndex = slides.length}
+    
+    for (i = 0; i < slides.length; i++) {
+      slides[i].style.opacity = "0";
+    }
+    for (i = 0; i < dots.length; i++) {
+      dots[i].className = dots[i].className.replace(" active", "");
+    }
+    
+    slides[slideIndex-1].style.opacity = "1";
+    dots[slideIndex-1].className += " active";
+  }
+
+  // Auto slide every 5 seconds
+  setInterval(function() {
+    changeSlide(1);
+  }, 5000);
+</script>
+
+{% endblock content %}

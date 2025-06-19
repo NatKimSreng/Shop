@@ -12,6 +12,10 @@ from payment.views import *
 import json
 from payment.forms import ShippingForm
 from payment.models import ShippingAddress
+from cart.cart import Cart
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
 
 
 # Create your views here.
@@ -141,13 +145,42 @@ def update_password(request):
                login(request, current_user)
                return redirect('update_user')
            else:
-               for error in list (form.errors.values()):
-                   messages.error(request, error)
-                   return redirect('update_password')
+               if form.errors:
+                   for error in list(form.errors.values()):
+                       messages.error(request, error)
+               return redirect('update_password')
        else:
             form = ChangePasswordForm(current_user)
             return render(request, 'store/update_password.html', {'form': form})
     else:
         messages.success(request, "You need to be logged in to update your password")
         return redirect('store')
+
+def add_to_cart(request, product_id):
+    """Add product to cart with stock validation"""
+    if request.method == 'POST':
+        try:
+            product = Product.objects.get(id=product_id)
+            quantity = int(request.POST.get('quantity', 1))
+            
+            if quantity <= 0:
+                messages.error(request, 'Quantity must be greater than 0')
+                return redirect('product', pk=product_id)
+            
+            cart = Cart(request)
+            success, message = cart.add(product, quantity)
+            
+            if success:
+                messages.success(request, message)
+            else:
+                messages.error(request, message)
+                
+        except Product.DoesNotExist:
+            messages.error(request, 'Product not found')
+        except ValueError:
+            messages.error(request, 'Invalid quantity')
+        except Exception as e:
+            messages.error(request, f'Error adding to cart: {str(e)}')
+    
+    return redirect('product', pk=product_id)
             

@@ -66,6 +66,29 @@
     padding: 0.4em 0.6em;
     border-radius: 0.5rem;
   }
+
+  /* Stock status styles */
+  .stock-badge {
+    font-size: 0.8rem;
+    padding: 0.3em 0.6em;
+    border-radius: 0.4rem;
+    font-weight: 500;
+  }
+
+  .stock-in {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  .stock-low {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+
+  .stock-out {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
 </style>
 
 <div class="container py-4">
@@ -93,7 +116,8 @@
               <th scope="col">Name</th>
               <th scope="col">Price</th>
               <th scope="col">Sale Price</th>
-              <th scope="col">In Stock</th>
+              <th scope="col">Stock Status</th>
+              <th scope="col">Quantity</th>
               <th scope="col">Description</th>
               <th scope="col">Image</th>
               <th scope="col">Category</th>
@@ -114,10 +138,20 @@
                 {% endif %}
               </td>
               <td>
-                {% if product.Is_sale %}
-                <span class="badge bg-success">In Stock</span>
-                {% else %}
-                <span class="badge bg-danger">Out of Stock</span>
+                <span class="stock-badge {% if product.quantity == 0 %}stock-out{% elif product.quantity <= 5 %}stock-low{% else %}stock-in{% endif %}">
+                  {% if product.quantity == 0 %}
+                    Out of Stock
+                  {% elif product.quantity <= 5 %}
+                    Low Stock
+                  {% else %}
+                    In Stock
+                  {% endif %}
+                </span>
+              </td>
+              <td>
+                <strong>{{ product.quantity }}</strong>
+                {% if product.quantity <= 5 and product.quantity > 0 %}
+                  <small class="text-warning d-block">⚠️ Low</small>
                 {% endif %}
               </td>
               <td>{{ product.description|truncatechars:50|default:'N/A' }}</td>
@@ -137,7 +171,7 @@
             </tr>
             {% empty %}
             <tr>
-              <td colspan="9" class="text-center">No products available.</td>
+              <td colspan="10" class="text-center">No products available.</td>
             </tr>
             {% endfor %}
           </tbody>

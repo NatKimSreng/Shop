@@ -15,11 +15,12 @@ from datetime import timedelta
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'price', 'Sale_price', 'Is_sale', 'description', 'image', 'category']
+        fields = ['name', 'price', 'Sale_price', 'quantity', 'Is_sale', 'description', 'image', 'category']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'Sale_price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
             'Is_sale': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'description': forms.TextInput(attrs={'class': 'form-control'}),
             'image': forms.FileInput(attrs={'class': 'form-control'}),
@@ -27,7 +28,8 @@ class ProductForm(forms.ModelForm):
         }
         labels = {
             'Sale_price': 'Sale Price',
-            'Is_sale': 'In Stock',
+            'quantity': 'Stock Quantity',
+            'Is_sale': 'On Sale',
             'image': 'Product Image',
         }
 
@@ -35,8 +37,16 @@ class ProductForm(forms.ModelForm):
         cleaned_data = super().clean()
         sale_price = cleaned_data.get('Sale_price')
         is_sale = cleaned_data.get('Is_sale')
+        quantity = cleaned_data.get('quantity', 0)
+        
+        # Ensure quantity is not negative
+        if quantity is not None and quantity < 0:
+            self.add_error('quantity', 'Stock quantity cannot be negative.')
+        
+        # Check if product is on sale but has no sale price
         if is_sale and (sale_price is None or sale_price <= 0):
-            self.add_error('Sale_price', 'A valid sale price is required when the product is in stock.')
+            self.add_error('Sale_price', 'A valid sale price is required when the product is on sale.')
+        
         return cleaned_data
 
 # Check if user is admin or superuser

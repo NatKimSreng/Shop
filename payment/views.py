@@ -13,9 +13,6 @@ from cart.cart import Cart
 from store.models import Product
 from .forms import ShippingForm, PaymentForm
 from .models import ShippingAddress, Order, OrderItem, DeliveryOption
-import qrcode
-from io import BytesIO
-import base64
 logger = logging.getLogger(__name__)
 
 @login_required(login_url='/register/')
@@ -153,17 +150,36 @@ def checkout(request):
     # Generate QR code for bank transfer if selected
     qr_code = None
     if request.POST.get('payment_method') == 'bank_transfer':
-        payment_data = f"Bank: Example Bank\nAccount: 1234567890\nAmount: ${order['grand_total']:.2f}"
-        qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
-        qr.add_data(payment_data)
-        qr.make(fit=True)
-        img = qr.make_image(fill_color="black", back_color="white")
-        buffered = BytesIO()
-        img.save(buffered, format="PNG")
-        qr_code = base64.b64encode(buffered.getvalue()).decode('utf-8')
+        try:
+            payment_data = f"Bank: Example Bank\nAccount: 1234567890\nAmount: ${order['grand_total']:.2f}"
+            qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
+            qr.add_data(payment_data)
+            qr.make(fit=True)
+            img = qr.make_image(fill_color="black", back_color="white")
+            buffered = BytesIO()
+            img.save(buffered, format="PNG")
+            qr_code = base64.b64encode(buffered.getvalue()).decode('utf-8')
+        except Exception as e:
+            logger.error(f"Error generating QR code: {e}")
+            qr_code = None
 
     if request.method == 'POST' and shipping_form.is_valid() and payment_form.is_valid():
         try:
+            # Validate stock before processing order
+            stock_errors = cart.validate_stock()
+            if stock_errors:
+                error_message = "Stock validation failed: " + "; ".join(stock_errors)
+                messages.error(request, error_message)
+                return render(request, "payment/checkout.html", {
+                    'order': order,
+                    'items': items,
+                    'delivery_options': delivery_options,
+                    'selected_delivery_id': selected_delivery_id,
+                    'shipping_form': shipping_form,
+                    'payment_form': payment_form,
+                    'qr_code': qr_code
+                })
+
             # Save shipping address
             shipping_address = shipping_form.save(commit=False)
             logger.debug(f"Saving shipping address for user: {request.user}")
@@ -180,7 +196,7 @@ def checkout(request):
                 amount_paid=order['grand_total']
             )
 
-            # Create OrderItems
+            # Create OrderItems and reduce stock
             order_items = []
             for product_id, item in cart.cart.items():
                 product = product_dict.get(product_id)
@@ -201,10 +217,17 @@ def checkout(request):
                         price = float(cleaned_price)
                     else:
                         price = float(price_raw)
+                    
+                    # Reduce stock
+                    quantity = item['quantity']
+                    if not product.reduce_stock(quantity):
+                        logger.error(f"Insufficient stock for product ID {product_id}")
+                        raise ValueError(f"Insufficient stock for {product.name}")
+                    
                     order_item = OrderItem.objects.create(
                         order=new_order,
                         product=product,
-                        quantity=item['quantity'],
+                        quantity=quantity,
                         price=price
                     )
                     order_items.append(order_item)

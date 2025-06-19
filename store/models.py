@@ -46,6 +46,7 @@ class Product(models.Model):
     image = models.ImageField(null=True, blank=True)
     Is_sale = models.BooleanField(default=False, null=True, blank=True)
     price = models.FloatField(null=True, blank=True)
+    quantity = models.PositiveIntegerField(default=0, help_text="Available stock quantity")
     
     def __str__(self):
         return self.name
@@ -57,6 +58,38 @@ class Product(models.Model):
         except:
             url = ''
         return url
+    
+    @property
+    def is_in_stock(self):
+        """Check if product is in stock"""
+        return self.quantity > 0
+    
+    @property
+    def stock_status(self):
+        """Get stock status as string"""
+        if self.quantity == 0:
+            return "Out of Stock"
+        elif self.quantity <= 5:
+            return f"Low Stock ({self.quantity} left)"
+        else:
+            return f"In Stock ({self.quantity} available)"
+    
+    def has_sufficient_stock(self, requested_quantity):
+        """Check if there's sufficient stock for the requested quantity"""
+        return self.quantity >= requested_quantity
+    
+    def reduce_stock(self, quantity):
+        """Reduce stock by the specified quantity"""
+        if self.has_sufficient_stock(quantity):
+            self.quantity -= quantity
+            self.save()
+            return True
+        return False
+    
+    def add_stock(self, quantity):
+        """Add stock by the specified quantity"""
+        self.quantity += quantity
+        self.save()
 
 class Order(models.Model):
     Product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)

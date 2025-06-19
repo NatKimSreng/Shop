@@ -40,22 +40,35 @@
 
       <!-- Product grid with improved cards -->
       <div class="row g-4 mb-5">
-        {% if searched %} {% for product in searched %} {% if product.Is_sale %}
-        <!-- Sale product card with enhanced styling -->
+        {% if searched %} {% for product in searched %}
         <div class="col-md-6 col-lg-4">
           <div
             class="card h-100 shadow-sm border-0 rounded-3 product-card transition-all"
           >
-            <!-- Improved sale badge -->
+            <!-- Sale badge -->
+            {% if product.Is_sale %}
             <div
               class="badge bg-danger text-white position-absolute px-3 py-2 rounded-pill"
               style="top: 1rem; right: 1rem; z-index: 1"
             >
               SALE
             </div>
+            {% endif %}
+
+            <!-- Stock status badge -->
+            <div class="position-absolute px-3 py-2 rounded-pill" style="top: 1rem; left: 1rem; z-index: 1; 
+                 {% if product.quantity == 0 %}background-color: #f8d7da; color: #721c24;{% elif product.quantity <= 5 %}background-color: #fff3cd; color: #856404;{% else %}background-color: #d4edda; color: #155724;{% endif %}">
+              {% if product.quantity == 0 %}
+                Out of Stock
+              {% elif product.quantity <= 5 %}
+                Low Stock ({{ product.quantity }})
+              {% else %}
+                In Stock ({{ product.quantity }})
+              {% endif %}
+            </div>
 
             <!-- Product image with hover effect -->
-            <div class="overflow-hidden rounded-top">
+            <div class="overflow-hidden rounded-top position-relative">
               <img
                 class="card-img-top product-img"
                 src="{{ product.image.url }}"
@@ -68,6 +81,16 @@
                 onmouseover="this.style.transform='scale(1.05)'"
                 onmouseout="this.style.transform='scale(1)'"
               />
+              <!-- Out of stock overlay -->
+              {% if not product.is_in_stock %}
+              <div
+                class="out-of-stock-overlay d-flex align-items-center justify-content-center position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"
+              >
+                <span class="out-of-stock-text text-white fw-bold"
+                  >Out of Stock</span
+                >
+              </div>
+              {% endif %}
             </div>
 
             <!-- Product details with improved spacing -->
@@ -76,7 +99,28 @@
                 <!-- Product name -->
                 <h5 class="fw-bolder mb-3">{{ product.name }}</h5>
 
-                <!-- Sale indicator with stars -->
+                <!-- Stock Information -->
+                <div class="mb-3">
+                  {% if product.quantity == 0 %}
+                    <div class="alert alert-danger py-2 px-3 mb-0">
+                      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                      <strong>Out of Stock</strong>
+                    </div>
+                  {% elif product.quantity <= 5 %}
+                    <div class="alert alert-warning py-2 px-3 mb-0">
+                      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                      <strong>Low Stock:</strong> Only {{ product.quantity }} left!
+                    </div>
+                  {% else %}
+                    <div class="alert alert-success py-2 px-3 mb-0">
+                      <i class="bi bi-check-circle-fill me-2"></i>
+                      <strong>In Stock:</strong> {{ product.quantity }} available
+                    </div>
+                  {% endif %}
+                </div>
+
+                <!-- Sale indicator with stars for sale items -->
+                {% if product.Is_sale %}
                 <div
                   class="d-flex justify-content-center align-items-center small text-warning mb-3"
                 >
@@ -88,71 +132,50 @@
                   <i class="bi bi-star-fill mx-1"></i>
                   <i class="bi bi-star-fill"></i>
                 </div>
+                {% endif %}
 
                 <!-- Product price with better formatting -->
+                {% if product.Is_sale %}
                 <div class="mb-3">
                   <span class="text-muted text-decoration-line-through me-2"
-                    >${{ product.price }}</span
-                  >
-                  <span class="fw-bold text-danger fs-5"
                     >${{ product.Sale_price }}</span
                   >
+                  <span class="fw-bold text-danger fs-5"
+                    >${{ product.price }}</span
+                  >
                 </div>
-              </div>
-            </div>
-
-            <!-- Product actions with improved button -->
-            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-              <div class="text-center">
-                <a
-                  class="btn btn-outline-primary rounded-pill px-4 py-2 mt-auto"
-                  href="{% url 'product' product.id %}"
-                >
-                  <i class="bi bi-eye me-2"></i>View Details
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {% else %}
-        <!-- Regular product card with enhanced styling -->
-        <div class="col-md-6 col-lg-4">
-          <div class="card h-100 shadow-sm border-0 rounded-3 product-card">
-            <!-- Product image with hover effect -->
-            <div class="overflow-hidden rounded-top">
-              <img
-                class="card-img-top product-img"
-                src="{{ product.image.url }}"
-                alt="{{ product.name }}"
-                style="
-                  object-fit: cover;
-                  height: 220px;
-                  transition: transform 0.3s ease;
-                "
-                onmouseover="this.style.transform='scale(1.05)'"
-                onmouseout="this.style.transform='scale(1)'"
-              />
-            </div>
-
-            <!-- Product details with improved spacing -->
-            <div class="card-body p-4">
-              <div class="text-center">
-                <!-- Product name -->
-                <h5 class="fw-bolder mb-3">{{ product.name }}</h5>
-
-                <!-- Product price with better formatting -->
+                {% else %}
                 <div class="mb-3">
                   <span class="fw-bold fs-5">${{ product.price }}</span>
                 </div>
+                {% endif %}
               </div>
             </div>
 
             <!-- Product actions with improved button -->
             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-              <div class="text-center">
+              <div class="text-center d-flex justify-content-center gap-2">
+                {% if product.is_in_stock and product.Is_sale %}
+                <button
+                  type="button"
+                  value="{{ product.id }}"
+                  class="btn btn-outline-primary rounded-pill px-4 py-2 add-cart"
+                  data-product-id="{{ product.id }}"
+                >
+                  Add to Cart
+                </button>
+                {% else %}
+                <button
+                  type="button"
+                  class="btn btn-outline-dark rounded-pill px-4 py-2"
+                  disabled
+                  aria-disabled="true"
+                >
+                  {% if not product.is_in_stock %}Out of Stock{% else %}Unavailable{% endif %}
+                </button>
+                {% endif %}
                 <a
-                  class="btn btn-outline-dark rounded-pill px-4 py-2 mt-auto"
+                  class="btn btn-outline-primary rounded-pill px-4 py-2"
                   href="{% url 'product' product.id %}"
                 >
                   <i class="bi bi-eye me-2"></i>View Details
@@ -161,7 +184,7 @@
             </div>
           </div>
         </div>
-        {% endif %} {% endfor %} {% else %}
+        {% endfor %} {% else %}
         <!-- No results message (shown only when search is performed but no results found) -->
         {% if request.method == 'POST' %}
         <div class="col-12 text-center py-5">
@@ -191,6 +214,24 @@
   .transition-all {
     transition: all 0.3s ease;
   }
+  .out-of-stock-overlay {
+    transition: opacity 0.3s ease;
+  }
+  .product-card:hover .out-of-stock-overlay {
+    opacity: 0.8;
+  }
+  .alert {
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-bottom: 0;
+  }
+  .alert i {
+    font-size: 1rem;
+  }
 </style>
 
+<!-- Include jQuery for Add to Cart functionality -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 {% endblock %}
+

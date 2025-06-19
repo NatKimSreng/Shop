@@ -39,9 +39,18 @@
                 <div class="text-danger">{{ form.Sale_price.errors }}</div>
               {% endif %}
             </div>
+            <div class="mb-3">
+              <label for="{{ form.quantity.id_for_label }}" class="form-label">Stock Quantity</label>
+              {{ form.quantity }}
+              <small class="form-text text-muted">Number of items available in stock</small>
+              {% if form.quantity.errors %}
+                <div class="text-danger">{{ form.quantity.errors }}</div>
+              {% endif %}
+            </div>
             <div class="mb-3 form-check">
               {{ form.Is_sale }}
-              <label for="{{ form.Is_sale.id_for_label }}" class="form-check-label">In Stock</label>
+              <label for="{{ form.Is_sale.id_for_label }}" class="form-check-label">On Sale</label>
+              <small class="form-text text-muted d-block">Check this if the product is currently on sale</small>
               {% if form.Is_sale.errors %}
                 <div class="text-danger">{{ form.Is_sale.errors }}</div>
               {% endif %}
@@ -78,6 +87,25 @@
                 <div class="text-danger">{{ form.category.errors }}</div>
               {% endif %}
             </div>
+            <!-- Stock Status Display -->
+            {% if product %}
+            <div class="mb-3">
+              <label class="form-label">Current Stock Status</label>
+              <div class="p-3 border rounded">
+                <strong>Quantity:</strong> {{ product.quantity }}<br>
+                <strong>Status:</strong> 
+                <span class="badge {% if product.quantity == 0 %}bg-danger{% elif product.quantity <= 5 %}bg-warning{% else %}bg-success{% endif %}">
+                  {% if product.quantity == 0 %}
+                    Out of Stock
+                  {% elif product.quantity <= 5 %}
+                    Low Stock
+                  {% else %}
+                    In Stock
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+            {% endif %}
           </div>
         </div>
         <div class="d-flex gap-2">
@@ -92,5 +120,6 @@
   .card { border: none; border-radius: 8px; }
   .form-control, .form-check-input, .form-select { border-radius: 4px; }
   .alert { border-radius: 4px; }
+  .badge { font-size: 0.8rem; }
 </style>
 {% endblock content %}

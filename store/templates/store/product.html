@@ -96,6 +96,51 @@
     font-weight: 500;
     color: #333;
   }
+  .stock-status {
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    border: 2px solid;
+  }
+  .stock-in {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+  }
+  .stock-low {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: #ffeaa7;
+  }
+  .stock-out {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+  }
+  .stock-details {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 1.5rem;
+  }
+  .stock-details h6 {
+    margin-bottom: 10px;
+    color: #495057;
+  }
+  .stock-details .row {
+    margin-bottom: 8px;
+  }
+  .stock-details .col-6 {
+    font-weight: 500;
+  }
+  .stock-details .col-6:first-child {
+    color: #6c757d;
+  }
+  .stock-details .col-6:last-child {
+    color: #212529;
+  }
 </style>
 
 <div class="container my-5">
@@ -107,18 +152,63 @@
           class="img-fluid product-img"
           alt="{{ product.name }}"
         />
-        {% if not product.Is_sale %}
+        {% if not product.is_in_stock %}
         <div class="out-of-stock-overlay">
           <span class="out-of-stock-text">Out of Stock</span>
         </div>
-        {% endif %} {% if product.Is_sale %}
+        {% endif %} 
+        {% if product.Is_sale %}
         <span class="sale-badge">Sale</span>
         {% endif %}
       </div>
     </div>
     <div class="col-lg-6">
       <h2 class="card-title mb-3">{{ product.name }}</h2>
-      {% if product.Is_sale %}
+      
+      <!-- Stock Status -->
+      <div class="stock-status {% if product.quantity == 0 %}stock-out{% elif product.quantity <= 5 %}stock-low{% else %}stock-in{% endif %}">
+        <i class="bi {% if product.quantity == 0 %}bi-x-circle-fill{% elif product.quantity <= 5 %}bi-exclamation-triangle-fill{% else %}bi-check-circle-fill{% endif %} me-2"></i>
+        {{ product.stock_status }}
+      </div>
+
+      <!-- Detailed Stock Information -->
+      <div class="stock-details">
+        <h6><i class="bi bi-box-seam me-2"></i>Stock Information</h6>
+        <div class="row">
+          <div class="col-6">Available Quantity:</div>
+          <div class="col-6">
+            <strong>{{ product.quantity }}</strong> units
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6">Stock Status:</div>
+          <div class="col-6">
+            {% if product.quantity == 0 %}
+              <span class="badge bg-danger">Out of Stock</span>
+            {% elif product.quantity <= 5 %}
+              <span class="badge bg-warning text-dark">Low Stock</span>
+            {% else %}
+              <span class="badge bg-success">In Stock</span>
+            {% endif %}
+          </div>
+        </div>
+        {% if product.quantity <= 5 and product.quantity > 0 %}
+        <div class="row mt-2">
+          <div class="col-12">
+            <small class="text-warning">
+              <i class="bi bi-exclamation-triangle-fill me-1"></i>
+              <strong>Hurry!</strong> Only {{ product.quantity }} left in stock!
+            </small>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      
+      {% if product.quantity == 0 %}
+      <p class="card-text fw-bold text-muted out-of-stock fs-5 mb-3">
+        Out of Stock
+      </p>
+      {% elif product.Is_sale %}
       <p class="card-text mb-3">
         <span class="text-muted text-decoration-line-through fs-5"
           >${{ product.price }}</span
@@ -128,89 +218,73 @@
         >
       </p>
       {% else %}
-      <p class="card-text fw-bold text-muted out-of-stock fs-5 mb-3">
-        Out of Stock
+      <p class="card-text mb-3">
+        <span class="fw-bold fs-5 text-dark">${{ product.price }}</span>
       </p>
       {% endif %}
       <p class="text-muted mb-4 description">{{ product.description }}</p>
-      {% if product.Is_sale %}
-      <div class="mb-3">
-        <label for="qty-cart" class="form-label">Quantity:</label>
-        <select id="qty-cart" class="form-select w-25">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
+      
+      {% if product.is_in_stock and product.Is_sale %}
+      <form method="POST" action="{% url 'add_to_cart' product.id %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="quantity" class="form-label">
+            <i class="bi bi-cart-plus me-2"></i>Quantity:
+          </label>
+          <select id="quantity" name="quantity" class="form-select w-25">
+            {% for i in "12345678910" %}
+              {% if forloop.counter <= product.quantity %}
+                <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+          <small class="form-text text-muted">
+            Maximum {{ product.quantity }} available
+          </small>
+        </div>
+        <button
+          type="submit"
+          class="btn btn-secondary"
+          {% if not product.is_in_stock %}disabled{% endif %}
+        >
+          <i class="bi bi-cart-plus me-2"></i>
+          {% if product.is_in_stock %}Add to Cart{% else %}Out of Stock{% endif %}
+        </button>
+      </form>
+      {% elif not product.is_in_stock %}
+      <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>Out of Stock:</strong> This product is currently unavailable. Please check back later.
       </div>
-      <button
-        type="button"
-        value="{{ product.id }}"
-        class="btn btn-secondary add-cart"
-        data-product-id="{{ product.id }}"
-      >
-        Add to Cart
-      </button>
       {% endif %}
+      
       <a href="{% url 'store' %}" class="btn btn-outline-secondary mt-3 w-100"
-        >Back to Products</a
+        ><i class="bi bi-arrow-left me-2"></i>Back to Products</a
       >
     </div>
   </div>
 </div>
 
-<!-- Include jQuery (already included in main.html, so not needed here) -->
-<!-- Custom Script -->
+<!-- Messages Display -->
+{% if messages %}
+<div class="container mt-3">
+  {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
 <script>
-  var $j = jQuery.noConflict();
-  $j(document).ready(function () {
-    $j(document).on("click", ".add-cart", function (e) {
-      e.preventDefault();
-      var $button = $j(this);
-      var product_id = $button.val();
-      var product_qty = $j("#qty-cart").val();
-
-      if (
-        !product_id ||
-        !product_qty ||
-        isNaN(product_qty) ||
-        product_qty < 1
-      ) {
-        console.error("Invalid product ID or quantity", {
-          product_id,
-          product_qty,
-        });
-        alert("Please select a valid product and quantity.");
-        return;
-      }
-
-      $button.prop("disabled", true).text("Adding...");
-      $j.ajax({
-        type: "POST",
-        url: '{% url "cart_add" %}',
-        headers: { "X-CSRFToken": "{{ csrf_token }}" },
-        data: {
-          product_id: product_id,
-          product_qty: product_qty,
-          action: "post",
-        },
-        success: function (json) {
-          $button.prop("disabled", false).text("Add to Cart");
-          if (document.getElementById("cart_quantity")) {
-            document.getElementById("cart_quantity").textContent = json.qty;
-          }
-          alert("Product added to cart!");
-        },
-        error: function (xhr) {
-          $button.prop("disabled", false).text("Add to Cart");
-          alert(
-            "Failed to add to cart: " +
-              (xhr.responseJSON ? xhr.responseJSON.error : "Unknown error")
-          );
-        },
-      });
+  // Auto-hide alerts after 5 seconds
+  setTimeout(function() {
+    var alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+      var bsAlert = new bootstrap.Alert(alert);
+      bsAlert.close();
     });
-  });
+  }, 5000);
 </script>
 {% endblock content %}
