@@ -19,111 +19,84 @@
     transform: translate(-50%, -50%);
 }
 </style>
-<div class="container">
-    <h1>User Management</h1>
-    <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary mb-3">Back to Dashboard</a>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Active</th>
-                <th>Staff</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.is_active|yesno:"Yes,No" }}</td>
-                <td>{{ user.is_staff|yesno:"Yes,No" }}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ user.pk }}">Edit</button>
-                    <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ user.pk }}">Delete</button>
-                </td>
-            </tr>
-            <!-- Edit Modal -->
-            <div class="modal fade" id="editModal{{ user.pk }}" tabindex="-1" aria-labelledby="editModalLabel{{ user.pk }}" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="editModalLabel{{ user.pk }}">Edit User: {{ user.username }}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="editForm{{ user.pk }}" method="post" action="{% url 'admin_user_edit' user.pk %}">
-                                {% csrf_token %}
-                                <div class="form-group mb-3">
-                                    <label for="username{{ user.pk }}">Username</label>
-                                    <input type="text" class="form-control" id="username{{ user.pk }}" name="username" value="{{ user.username }}" required>
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label for="email{{ user.pk }}">Email</label>
-                                    <input type="email" class="form-control" id="email{{ user.pk }}" name="email" value="{{ user.email }}" required>
-                                </div>
-                                <div class="form-check mb-3">
-                                    <input type="checkbox" class="form-check-input" id="is_active{{ user.pk }}" name="is_active" {% if user.is_active %}checked{% endif %}>
-                                    <label class="form-check-label" for="is_active{{ user.pk }}">Active</label>
-                                </div>
-                                <div class="form-check mb-3">
-                                    <input type="checkbox" class="form-check-input" id="is_staff{{ user.pk }}" name="is_staff" {% if user.is_staff %}checked{% endif %}>
-                                    <label class="form-check-label" for="is_staff{{ user.pk }}">Staff Status</label>
-                                </div>
-                                <div class="position-relative">
-                                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                                    <div id="spinner{{ user.pk }}" class="loading-spinner"></div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Delete Modal -->
-            <div class="modal fade" id="deleteModal{{ user.pk }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ user.pk }}" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel{{ user.pk }}">Delete User: {{ user.username }}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Are you sure you want to delete the user "{{ user.username }}"?</p>
-                            <form id="deleteForm{{ user.pk }}" method="post" action="{% url 'admin_user_delete' user.pk %}">
-                                {% csrf_token %}
-                                <div class="position-relative">
-                                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
-                                    <div id="deleteSpinner{{ user.pk }}" class="loading-spinner"></div>
-                                </div>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <tr>
-                <td colspan="5">No users found</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="container py-4">
+    <h1 class="mb-4">User Management</h1>
+    <form method="get" class="row g-3 mb-3 align-items-end">
+        <div class="col-md-4">
+            <label for="search" class="form-label">Search</label>
+            <input type="text" id="search" name="q" class="form-control" placeholder="Username or Email" value="{{ search_query }}">
+        </div>
+        <div class="col-md-2">
+            <label for="is_active" class="form-label">Active</label>
+            <select id="is_active" name="is_active" class="form-select">
+                <option value="">All</option>
+                <option value="1" {% if is_active == '1' %}selected{% endif %}>Active</option>
+                <option value="0" {% if is_active == '0' %}selected{% endif %}>Inactive</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="is_staff" class="form-label">Staff</label>
+            <select id="is_staff" name="is_staff" class="form-select">
+                <option value="">All</option>
+                <option value="1" {% if is_staff == '1' %}selected{% endif %}>Staff</option>
+                <option value="0" {% if is_staff == '0' %}selected{% endif %}>Non-Staff</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search/Filter</button>
+        </div>
+    </form>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3 d-flex gap-2">
+            <button type="submit" name="action" value="activate" class="btn btn-success btn-sm">Activate</button>
+            <button type="submit" name="action" value="deactivate" class="btn btn-warning btn-sm">Deactivate</button>
+            <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete selected users?')">Delete</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th><input type="checkbox" id="select-all"></th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Active</th>
+                        <th>Staff</th>
+                        <th>Last Login</th>
+                        <th>Date Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td><input type="checkbox" name="selected_users" value="{{ user.id }}"></td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{% if user.is_active %}<span class="badge bg-success">Yes</span>{% else %}<span class="badge bg-danger">No</span>{% endif %}</td>
+                        <td>{% if user.is_staff %}<span class="badge bg-primary">Yes</span>{% else %}<span class="badge bg-secondary">No</span>{% endif %}</td>
+                        <td>{{ user.last_login|date:'Y-m-d H:i' }}</td>
+                        <td>{{ user.date_joined|date:'Y-m-d' }}</td>
+                        <td>
+                            <a href="{% url 'admin_user_edit' user.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <a href="{% url 'admin_user_delete' user.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="8" class="text-center">No users found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
 </div>
 <script>
-document.querySelectorAll('form[id^="editForm"]').forEach(form => {
-    form.addEventListener('submit', function(e) {
-        const spinner = this.querySelector('.loading-spinner');
-        spinner.style.display = 'block';
-        this.querySelector('button[type="submit"]').disabled = true;
-    });
-});
-document.querySelectorAll('form[id^="deleteForm"]').forEach(form => {
-    form.addEventListener('submit', function(e) {
-        const spinner = this.querySelector('.loading-spinner');
-        spinner.style.display = 'block';
-        this.querySelector('button[type="submit"]').disabled = true;
-    });
+document.getElementById('select-all').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('input[name="selected_users"]');
+    for (const cb of checkboxes) {
+        cb.checked = this.checked;
+    }
 });
 </script>
 {% endblock content %}

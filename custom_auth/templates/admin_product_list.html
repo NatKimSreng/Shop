@@ -92,94 +92,110 @@
 </style>
 
 <div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Product List</h1>
-    <a href="{% url 'add_product' %}" class="btn btn-primary">Add New Product</a>
-  </div>
-  {% if messages %}
-    <div class="mb-3">
-      {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      {% endfor %}
+  <h1 class="mb-4">Product Management</h1>
+  <form method="get" class="row g-3 mb-3 align-items-end">
+    <div class="col-md-3">
+      <label for="search" class="form-label">Search</label>
+      <input type="text" id="search" name="q" class="form-control" placeholder="Product Name" value="{{ search_query }}">
     </div>
-  {% endif %}
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Name</th>
-              <th scope="col">Price</th>
-              <th scope="col">Sale Price</th>
-              <th scope="col">Stock Status</th>
-              <th scope="col">Quantity</th>
-              <th scope="col">Description</th>
-              <th scope="col">Image</th>
-              <th scope="col">Category</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for product in products %}
-            <tr>
-              <td>{{ product.id }}</td>
-              <td>{{ product.name }}</td>
-              <td>${{ product.price|floatformat:2 }}</td>
-              <td>
-                {% if product.Is_sale %}
-                ${{ product.Sale_price|floatformat:2 }}
-                {% else %}
-                N/A
-                {% endif %}
-              </td>
-              <td>
-                <span class="stock-badge {% if product.quantity == 0 %}stock-out{% elif product.quantity <= 5 %}stock-low{% else %}stock-in{% endif %}">
-                  {% if product.quantity == 0 %}
-                    Out of Stock
-                  {% elif product.quantity <= 5 %}
-                    Low Stock
-                  {% else %}
-                    In Stock
-                  {% endif %}
-                </span>
-              </td>
-              <td>
-                <strong>{{ product.quantity }}</strong>
-                {% if product.quantity <= 5 and product.quantity > 0 %}
-                  <small class="text-warning d-block">⚠️ Low</small>
-                {% endif %}
-              </td>
-              <td>{{ product.description|truncatechars:50|default:'N/A' }}</td>
-              <td>
-                <img
-                  src="{% if product.image %}{{ product.image.url }}{% else %}/static/images/placeholder.jpg{% endif %}"
-                  alt="{{ product.name }}"
-                  style="width: 50px; height: 50px; object-fit: cover;"
-                />
-              </td>
-              <td>{{ product.category|default:'N/A' }}</td>
-              <td>
-                <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
-                <a href="{% url 'delete_product' product.id %}" class="btn btn-sm btn-outline-danger"
-                   onclick="return confirm('Are you sure you want to delete {{ product.name }}?');">Delete</a>
-              </td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="10" class="text-center">No products available.</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+    <div class="col-md-3">
+      <label for="category" class="form-label">Category</label>
+      <select id="category" name="category" class="form-select">
+        <option value="">All</option>
+        {% for cat in categories %}
+        <option value="{{ cat.id }}" {% if category_id|add:'' == cat.id|stringformat:'s' %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
     </div>
-  </div>
+    <div class="col-md-2">
+      <label for="stock" class="form-label">Stock</label>
+      <select id="stock" name="stock" class="form-select">
+        <option value="">All</option>
+        <option value="in" {% if stock_status == 'in' %}selected{% endif %}>In Stock</option>
+        <option value="out" {% if stock_status == 'out' %}selected{% endif %}>Out of Stock</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label for="sale" class="form-label">Sale</label>
+      <select id="sale" name="sale" class="form-select">
+        <option value="">All</option>
+        <option value="1" {% if sale_status == '1' %}selected{% endif %}>On Sale</option>
+        <option value="0" {% if sale_status == '0' %}selected{% endif %}>Not on Sale</option>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">Search/Filter</button>
+    </div>
+  </form>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3 d-flex gap-2 align-items-center">
+      <button type="submit" name="action" value="set_sale" class="btn btn-success btn-sm">Set Sale</button>
+      <button type="submit" name="action" value="unset_sale" class="btn btn-warning btn-sm">Unset Sale</button>
+      <button type="submit" name="action" value="delete" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete selected products?')">Delete</button>
+      <input type="number" name="restock_qty" min="1" class="form-control form-control-sm w-auto" placeholder="Restock Qty">
+      <button type="submit" name="action" value="restock" class="btn btn-info btn-sm">Restock</button>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th><input type="checkbox" id="select-all"></th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Sale Price</th>
+            <th>Stock</th>
+            <th>On Sale</th>
+            <th>Image</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in products %}
+          <tr {% if product.quantity <= 5 %}class="table-warning"{% endif %}>
+            <td><input type="checkbox" name="selected_products" value="{{ product.id }}"></td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.category.name }}</td>
+            <td>${{ product.price|floatformat:2 }}</td>
+            <td>{% if product.Is_sale %}${{ product.Sale_price|floatformat:2 }}{% else %}-{% endif %}</td>
+            <td>
+              {% if product.quantity == 0 %}
+                <span class="badge bg-danger">Out of Stock</span>
+              {% elif product.quantity <= 5 %}
+                <span class="badge bg-warning text-dark">Low ({{ product.quantity }})</span>
+              {% else %}
+                <span class="badge bg-success">{{ product.quantity }}</span>
+              {% endif %}
+            </td>
+            <td>{% if product.Is_sale %}<span class="badge bg-success">Yes</span>{% else %}<span class="badge bg-secondary">No</span>{% endif %}</td>
+            <td>
+              {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+              {% else %}-{% endif %}
+            </td>
+            <td>
+              <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+              <a href="{% url 'delete_product' product.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="9" class="text-center">No products found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </form>
 </div>
+<script>
+  document.getElementById('select-all').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('input[name="selected_products"]');
+    for (const cb of checkboxes) {
+      cb.checked = this.checked;
+    }
+  });
+</script>
 
 <!-- Custom CSS for styling -->
 <style>

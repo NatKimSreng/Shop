@@ -238,11 +238,68 @@ def admin_order_update_status(request, order_id):
         messages.error(request, f'Invalid status: {status}.')
     return redirect('admin_order_detail', order_id=order_id)
 
-@login_required(login_url='/login/')
+@login_required
 @user_passes_test(is_admin_or_superuser, login_url='/login/')
 def admin_product_list(request):
     products = Product.objects.all()
-    return render(request, 'admin_product_list.html', {'products': products})
+    categories = Category.objects.all()
+    search_query = request.GET.get('q', '').strip()
+    category_id = request.GET.get('category', '')
+    stock_status = request.GET.get('stock', '')
+    sale_status = request.GET.get('sale', '')
+
+    # Search
+    if search_query:
+        products = products.filter(name__icontains=search_query)
+    # Filter by category
+    if category_id:
+        products = products.filter(category_id=category_id)
+    # Filter by stock status
+    if stock_status == 'in':
+        products = products.filter(quantity__gt=0)
+    elif stock_status == 'out':
+        products = products.filter(quantity=0)
+    # Filter by sale status
+    if sale_status == '1':
+        products = products.filter(Is_sale=True)
+    elif sale_status == '0':
+        products = products.filter(Is_sale=False)
+
+    # Bulk actions
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        selected_ids = request.POST.getlist('selected_products')
+        if selected_ids:
+            selected_products = Product.objects.filter(id__in=selected_ids)
+            if action == 'set_sale':
+                selected_products.update(Is_sale=True)
+                messages.success(request, f"Set {selected_products.count()} products on sale.")
+            elif action == 'unset_sale':
+                selected_products.update(Is_sale=False)
+                messages.success(request, f"Removed sale from {selected_products.count()} products.")
+            elif action == 'delete':
+                count = selected_products.count()
+                selected_products.delete()
+                messages.success(request, f"Deleted {count} products.")
+            elif action == 'restock':
+                restock_qty = int(request.POST.get('restock_qty', 0))
+                for product in selected_products:
+                    product.quantity += restock_qty
+                    product.save()
+                messages.success(request, f"Restocked {selected_products.count()} products by {restock_qty} units each.")
+            return redirect('admin_product_list')
+        else:
+            messages.warning(request, "No products selected for bulk action.")
+
+    context = {
+        'products': products,
+        'categories': categories,
+        'search_query': search_query,
+        'category_id': category_id,
+        'stock_status': stock_status,
+        'sale_status': sale_status,
+    }
+    return render(request, 'admin_product_list.html', context)
 
 @login_required(login_url='/login/')
 @user_passes_test(is_admin_or_superuser, login_url='/login/')
@@ -298,7 +355,48 @@ def is_admin(user):
 @user_passes_test(is_admin, login_url='/login/')
 def admin_user_list(request):
     users = User.objects.all()
-    return render(request, 'user_list.html', {'users': users})
+    search_query = request.GET.get('q', '').strip()
+    is_active = request.GET.get('is_active', '')
+    is_staff = request.GET.get('is_staff', '')
+
+    # Search
+    if search_query:
+        users = users.filter(
+            Q(username__icontains=search_query) | Q(email__icontains=search_query)
+        )
+    # Filter
+    if is_active in ['1', '0']:
+        users = users.filter(is_active=(is_active == '1'))
+    if is_staff in ['1', '0']:
+        users = users.filter(is_staff=(is_staff == '1'))
+
+    # Bulk actions
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        selected_ids = request.POST.getlist('selected_users')
+        if selected_ids:
+            selected_users = User.objects.filter(id__in=selected_ids)
+            if action == 'activate':
+                selected_users.update(is_active=True)
+                messages.success(request, f"Activated {selected_users.count()} users.")
+            elif action == 'deactivate':
+                selected_users.update(is_active=False)
+                messages.success(request, f"Deactivated {selected_users.count()} users.")
+            elif action == 'delete':
+                count = selected_users.count()
+                selected_users.delete()
+                messages.success(request, f"Deleted {count} users.")
+            return redirect('admin_user_list')
+        else:
+            messages.warning(request, "No users selected for bulk action.")
+
+    context = {
+        'users': users,
+        'search_query': search_query,
+        'is_active': is_active,
+        'is_staff': is_staff,
+    }
+    return render(request, 'user_list.html', context)
 
 @login_required
 @user_passes_test(is_admin, login_url='/login/')
