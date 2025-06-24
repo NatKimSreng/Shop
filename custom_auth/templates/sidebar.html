@@ -20,147 +20,40 @@
       integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
       crossorigin="anonymous"
     />
-    <style>
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      .loading-spinner {
-        display: none;
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #3498db;
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        animation: spin 1s linear infinite;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-    </style>
   </head>
   <body>
     <header>
       <nav id="sidebarMenu" class="sidebar collapse d-lg-block">
         <div class="sidebar-sticky">
           <div class="list-group list-group-flush mx-3 mt-4">
-            <button
+            <a
+              href="{% url 'admin_dashboard' %}"
               class="list-group-item list-group-item-action py-2 ripple {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}"
-              data-bs-toggle="modal"
-              data-bs-target="#dashboardModal"
             >
               <i class="fas fa-home fa-fw me-2"></i><span>Main Dashboard</span>
-            </button>
-            <button
+            </a>
+            <a
+              href="{% url 'admin_product_list' %}"
               class="list-group-item list-group-item-action py-2 ripple {% if request.resolver_match.url_name == 'admin_product_list' %}active{% endif %}"
-              data-bs-toggle="modal"
-              data-bs-target="#productListModal"
             >
               <i class="fas fa-box-open fa-fw me-2"></i><span>Product List</span>
-            </button>
-            <button
+            </a>
+            <a
+              href="{% url 'admin_order_list' %}"
               class="list-group-item list-group-item-action py-2 ripple {% if request.resolver_match.url_name == 'admin_order_list' %}active{% endif %}"
-              data-bs-toggle="modal"
-              data-bs-target="#orderModal"
             >
               <i class="fas fa-shopping-cart fa-fw me-2"></i><span>Order</span>
-            </button>
-            <button
+            </a>
+            <a
+              href="{% url 'admin_user_list' %}"
               class="list-group-item list-group-item-action py-2 ripple {% if request.resolver_match.url_name == 'admin_user_list' %}active{% endif %}"
-              data-bs-toggle="modal"
-              data-bs-target="#adminManagementModal"
             >
               <i class="fas fa-user-cog fa-fw me-2"></i><span>Admin Management</span>
-            </button>
+            </a>
           </div>
         </div>
       </nav>
-      <!-- Navigation Modals -->
-      <div class="modal fade" id="dashboardModal" tabindex="-1" aria-labelledby="dashboardModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="dashboardModalLabel">Navigate to Main Dashboard</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p>Do you want to navigate to the Main Dashboard?</p>
-              <form id="dashboardForm" method="GET" action="{% url 'admin_dashboard' %}">
-                {% csrf_token %}
-                <div class="position-relative">
-                  <button type="submit" class="btn btn-primary">Proceed</button>
-                  <div id="dashboardSpinner" class="loading-spinner"></div>
-                </div>
-                <button type="button" class="btn btn-secondary mt-2" data-bs-dismiss="modal">Cancel</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal fade" id="productListModal" tabindex="-1" aria-labelledby="productListModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="productListModalLabel">Navigate to Product List</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p>Do you want to navigate to the Product List?</p>
-              <form id="productListForm" method="GET" action="{% url 'admin_product_list' %}">
-                {% csrf_token %}
-                <div class="position-relative">
-                  <button type="submit" class="btn btn-primary">Proceed</button>
-                  <div id="productListSpinner" class="loading-spinner"></div>
-                </div>
-                <button type="button" class="btn btn-secondary mt-2" data-bs-dismiss="modal">Cancel</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="orderModalLabel">Navigate to Order</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p>Do you want to navigate to the Order page?</p>
-              <form id="orderForm" method="GET" action="{% url 'admin_order_list' %}">
-                {% csrf_token %}
-                <div class="position-relative">
-                  <button type="submit" class="btn btn-primary">Proceed</button>
-                  <div id="orderSpinner" class="loading-spinner"></div>
-                </div>
-                <button type="button" class="btn btn-secondary mt-2" data-bs-dismiss="modal">Cancel</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal fade" id="adminManagementModal" tabindex="-1" aria-labelledby="adminManagementModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="adminManagementModalLabel">Navigate to Admin Management</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-              <p>Do you want to navigate to the Admin Management page?</p>
-              <form id="adminManagementForm" method="GET" action="{% url 'admin_user_list' %}">
-                {% csrf_token %}
-                <div class="position-relative">
-                  <button type="submit" class="btn btn-primary">Proceed</button>
-                  <div id="adminManagementSpinner" class="loading-spinner"></div>
-                </div>
-                <button type="button" class="btn btn-secondary mt-2" data-bs-dismiss="modal">Cancel</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
+
       <nav id="main-navbar" class="navbar navbar-expand-lg fixed-top">
         <div class="container-fluid">
           <button
@@ -208,10 +101,7 @@
                 <i class="fas fa-bell"></i>
                 <span class="badge rounded-pill badge-notification bg-danger">1</span>
               </a>
-              <ul
-                class="dropdown-menu dropdown-menu-end"
-                aria-labelledby="navbarDropdownMenuLink"
-              >
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                 <li><a class="dropdown-item" href="#">Some news</a></li>
                 <li><a class="dropdown-item" href="#">Another news</a></li>
                 <li><a class="dropdown-item" href="#">Something else here</a></li>
@@ -228,10 +118,7 @@
               >
                 <i class="fas fa-globe"></i>
               </a>
-              <ul
-                class="dropdown-menu dropdown-menu-end"
-                aria-labelledby="navbarDropdown"
-              >
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                 <li>
                   <a class="dropdown-item" href="#">
                     <i class="fas fa-globe"></i> English
@@ -266,10 +153,7 @@
                   loading="lazy"
                 />
               </a>
-              <ul
-                class="dropdown-menu dropdown-menu-end"
-                aria-labelledby="navbarDropdownMenuLink"
-              >
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
                 <li><a class="dropdown-item" href="#">My profile</a></li>
                 <li><a class="dropdown-item" href="#">Settings</a></li>
                 <li><a class="dropdown-item" href="#">Logout</a></li>
@@ -279,9 +163,11 @@
         </div>
       </nav>
     </header>
+
     <main style="margin-top: 70px; margin-left: 250px">
       <div class="container pt-4">{% block content %}{% endblock %}</div>
     </main>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
@@ -296,14 +182,6 @@
             e.preventDefault();
             $("#searchInput").focus();
           }
-        });
-        // Handle modal form submissions with spinner
-        document.querySelectorAll('form[id$="Form"]').forEach(form => {
-          form.addEventListener('submit', function(e) {
-            const spinner = this.querySelector('.loading-spinner');
-            spinner.style.display = 'block';
-            this.querySelector('button[type="submit"]').disabled = true;
-          });
         });
       });
     </script>
