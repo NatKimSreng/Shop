@@ -9,6 +9,7 @@ import base64
 from django.shortcuts import render, redirect
 from django.contrib import messages
 import logging
+import requests
 from cart.cart import Cart
 from store.models import Product
 from .forms import ShippingForm, PaymentForm
@@ -269,6 +270,16 @@ def checkout(request):
             }
             request.session['payment_method'] = new_order.get_payment_method_display()
             logger.debug("Redirecting to payment_success")
+
+            # Send Telegram notification
+            logger.info(f"About to send Telegram notification for order {new_order.id}")
+            try:
+                send_telegram_notification(new_order, order_items, shipping_address, selected_delivery, payment_form.cleaned_data['payment_method'])
+                logger.info(f"Telegram notification sent successfully for order {new_order.id}")
+            except Exception as e:
+                logger.error(f"Error in Telegram notification for order {new_order.id}: {str(e)}")
+            
+            logger.info(f"Redirecting to payment_success for order {new_order.id}")
             return redirect('payment_success')
 
         except Exception as e:
@@ -293,10 +304,56 @@ def checkout(request):
         'payment_form': payment_form,
         'qr_code': qr_code
     })
+
+def send_telegram_notification(order, order_items, shipping_address, delivery_option, payment_method):
+    """
+    Send order notification to Telegram group
+    """
+    try:
+        bot_token = '7875498577:AAHaoHdqWX390E_GI08v4gBe78izt76r4Rc'
+        chat_id = '-4862435107'  # Bot Get me Shop group
+        
+        # Calculate total items
+        total_items = sum(item.quantity for item in order_items)
+        
+        # Format a concise message for group
+        message = f"🛒 *NEW ORDER #{order.id}*\n\n"
+        message += f"💰 *Total:* ${order.amount_paid:.2f}\n"
+        message += f"📦 *Items:* {total_items} item{'s' if total_items != 1 else ''}\n"
+        message += f"👤 *Customer:* {shipping_address.shipping_full_name}\n"
+        message += f"📧 *Email:* {shipping_address.shipping_email}\n"
+        message += f"🚚 *Delivery:* {delivery_option.name}\n"
+        message += f"💳 *Payment:* {payment_method}\n\n"
+        
+        # List items briefly
+        message += f"📋 *Order Items:*\n"
+        for item in order_items:
+            message += f"• {item.product.name} x{item.quantity}\n"
+        
+        message += f"\n📍 *Address:* {shipping_address.shipping_city}, {shipping_address.shipping_country}"
+        
+        # Send to Telegram
+        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+        data = {
+            'chat_id': chat_id,
+            'text': message,
+            'parse_mode': 'Markdown'
+        }
+        
+        response = requests.post(url, data=data, timeout=10)
+        if response.status_code == 200:
+            logger.info(f"Telegram notification sent successfully for order {order.id}")
+        else:
+            logger.error(f"Failed to send Telegram notification: {response.text}")
+            
+    except Exception as e:
+        logger.error(f"Error sending Telegram notification: {str(e)}")
+
 def payment_success(request):
     return render(request, "payment/payment_success.html", {
         'order_id': request.session.get('order_id', 'N/A'),
         'order_items': request.session.get('order_items', []),
+        
         'shipping_address': request.session.get('shipping_address', {}),
         'delivery_option': request.session.get('delivery_option', {}),
         'payment_method': request.session.get('payment_method', 'N/A')
@@ -347,3 +404,44 @@ def customer_invoice_list(request):
         'email': email
     }
     return render(request, 'payment/customer_invoice_list.html', context)
+
+@login_required(login_url='/register/')
+def test_telegram_notification(request):
+    """
+    Test endpoint to manually trigger a Telegram notification
+    """
+    try:
+        # Create test data
+        test_order = type('TestOrder', (), {
+            'id': 999,
+            'amount_paid': 299.99
+        })()
+        
+        test_shipping = type('TestShipping', (), {
+            'shipping_full_name': 'Test Customer',
+            'shipping_email': 'test@example.com',
+            'shipping_city': 'New York',
+            'shipping_country': 'United States'
+        })()
+        
+        test_delivery = type('TestDelivery', (), {
+            'name': 'Express Delivery'
+        })()
+        
+        test_items = [
+            type('TestItem', (), {
+                'product': type('TestProduct', (), {'name': 'iPhone 15 Pro'})(),
+                'quantity': 1,
+                'price': 299.99
+            })()
+        ]
+        
+        # Send test notification
+        send_telegram_notification(test_order, test_items, test_shipping, test_delivery, 'Credit Card')
+        
+        messages.success(request, 'Test Telegram notification sent successfully!')
+        return redirect('payment_success')
+        
+    except Exception as e:
+        messages.error(request, f'Error sending test notification: {str(e)}')
+        return redirect('home')

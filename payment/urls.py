@@ -8,4 +8,5 @@ urlpatterns = [
 	path('checkout/', views.checkout, name="checkout"),
 	path('customer_invoice_detail/<int:order_id>/', views.customer_invoice_detail, name="customer_invoice_detail"),
 	path('customer_invoice_list/', views.customer_invoice_list, name="customer_invoice_list"),
+	path('test-telegram/', views.test_telegram_notification, name="test_telegram"),
 ]
