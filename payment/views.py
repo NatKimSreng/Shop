@@ -307,11 +307,20 @@ def checkout(request):
 
 def send_telegram_notification(order, order_items, shipping_address, delivery_option, payment_method):
     """
-    Send order notification to Telegram group
+    Send order notification to Telegram group with retry logic and better error handling
     """
+    import os
+    import time
+    
     try:
-        bot_token = '7875498577:AAHaoHdqWX390E_GI08v4gBe78izt76r4Rc'
-        chat_id = '-4862435107'  # Bot Get me Shop group
+        # Get bot configuration from environment variables or use defaults
+        bot_token = os.environ.get('TELEGRAM_BOT_TOKEN', '7875498577:AAHaoHdqWX390E_GI08v4gBe78izt76r4Rc')
+        chat_id = os.environ.get('TELEGRAM_CHAT_ID', '-4862435107')  # Bot Get me Shop group
+        
+        # Validate configuration
+        if not bot_token or not chat_id:
+            logger.error("Telegram bot configuration missing: BOT_TOKEN or CHAT_ID")
+            return False
         
         # Calculate total items
         total_items = sum(item.quantity for item in order_items)
@@ -332,22 +341,55 @@ def send_telegram_notification(order, order_items, shipping_address, delivery_op
         
         message += f"\n📍 *Address:* {shipping_address.shipping_city}, {shipping_address.shipping_country}"
         
-        # Send to Telegram
-        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-        data = {
-            'chat_id': chat_id,
-            'text': message,
-            'parse_mode': 'Markdown'
-        }
+        # Retry logic for sending to Telegram
+        max_retries = 3
+        retry_delay = 2  # seconds
         
-        response = requests.post(url, data=data, timeout=10)
-        if response.status_code == 200:
-            logger.info(f"Telegram notification sent successfully for order {order.id}")
-        else:
-            logger.error(f"Failed to send Telegram notification: {response.text}")
+        for attempt in range(max_retries):
+            try:
+                # Send to Telegram
+                url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+                data = {
+                    'chat_id': chat_id,
+                    'text': message,
+                    'parse_mode': 'Markdown'
+                }
+                
+                response = requests.post(url, data=data, timeout=30)  # Increased timeout
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    if result.get('ok'):
+                        logger.info(f"Telegram notification sent successfully for order {order.id}")
+                        return True
+                    else:
+                        logger.error(f"Telegram API error: {result.get('description', 'Unknown error')}")
+                else:
+                    logger.error(f"HTTP error {response.status_code}: {response.text}")
+                
+                # If not the last attempt, wait before retrying
+                if attempt < max_retries - 1:
+                    logger.info(f"Retrying Telegram notification in {retry_delay} seconds... (attempt {attempt + 2}/{max_retries})")
+                    time.sleep(retry_delay)
+                    retry_delay *= 2  # Exponential backoff
+                    
+            except requests.exceptions.Timeout:
+                logger.error(f"Telegram request timeout (attempt {attempt + 1}/{max_retries})")
+                if attempt < max_retries - 1:
+                    time.sleep(retry_delay)
+                    retry_delay *= 2
+            except requests.exceptions.RequestException as e:
+                logger.error(f"Telegram request error (attempt {attempt + 1}/{max_retries}): {str(e)}")
+                if attempt < max_retries - 1:
+                    time.sleep(retry_delay)
+                    retry_delay *= 2
+                    
+        logger.error(f"Failed to send Telegram notification after {max_retries} attempts for order {order.id}")
+        return False
             
     except Exception as e:
         logger.error(f"Error sending Telegram notification: {str(e)}")
+        return False
 
 def payment_success(request):
     return render(request, "payment/payment_success.html", {

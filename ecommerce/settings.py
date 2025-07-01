@@ -81,10 +81,26 @@ WSGI_APPLICATION = 'ecommerce.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', 'shop_db'),
+        'USER': os.environ.get('DB_USER', 'shop_user'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'shop_password'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '5432'),
+        'OPTIONS': {
+            'charset': 'utf8',
+        },
     }
 }
+
+# Fallback to SQLite if PostgreSQL is not available
+if not os.environ.get('DB_HOST'):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -122,7 +138,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -139,7 +155,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 CART_SESSION_ID = 'cart'
 CSRF_COOKIE_SECURE = False  # Set to True in production
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
+CSRF_TRUSTED_ORIGINS = ['https://bbu-d104-g5.thavrak-lab.xyz']
+CSRF_TRUSTED_ORIGINS = ['https://shop-racw.onrender.com']
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
