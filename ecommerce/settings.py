@@ -172,3 +172,4 @@ LOGGING = {
     },
 }
 # settings.py
+DEBUG = os.environ.get("DEBUG", "False") != "True"
